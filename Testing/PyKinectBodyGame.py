@@ -47,16 +47,16 @@ class BodyGameRuntime(object):
     def draw_ind_point(self, joints, jointPoints, color, joint0):
         joint0State = joints[joint0].TrackingState;
 
-        if (joint0State == PyKinectV2.TrackingState_NotTracked)
+        if (joint0State == PyKinectV2.TrackingState_NotTracked):
             return
 
-        if (joint0State == PyKinectV2.TrackingState_Inferred)
+        if (joint0State == PyKinectV2.TrackingState_Inferred):
             return
 
-        center = (jointPoints[joint0].x, jointPoints[joint0].y)
+        center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
         try:
-            pygame.draw.line(self._frame_surface, color, center, 5, 0)
+            pygame.draw.circle(self._frame_surface, color, center, 5, 0)
         except: # need to catch it due to possible invalid positions (with inf)
             pass
 
@@ -76,21 +76,15 @@ class BodyGameRuntime(object):
         target_surface.unlock()
 
     def run(self):
-        # -------- Main Program Loop -----------
         while not self._done:
-            # --- Main event loop
-            for event in pygame.event.get(): # User did something
-                if event.type == pygame.QUIT: # If user clicked close
-                    self._done = True # Flag that we are done so we exit this loop
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self._done = True
 
-                elif event.type == pygame.VIDEORESIZE: # window resized
+                elif event.type == pygame.VIDEORESIZE:
                     self._screen = pygame.display.set_mode(event.dict['size'], 
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
                     
-            # --- Game logic should go here
-
-            # --- Getting frames and drawing  
-            # --- Woohoo! We've got a color frame! Let's fill out back buffer surface with frame's data 
             if self._kinect.has_new_color_frame():
                 frame = self._kinect.get_last_color_frame()
                 self.draw_color_frame(frame, self._frame_surface)
@@ -110,7 +104,7 @@ class BodyGameRuntime(object):
                     joints = body.joints 
                     # convert joint coordinates to color space 
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.draw_body(joints, joint_points, SKELETON_COLORS[i])
+                    self.draw_all_points(joints, joint_points, SKELETON_COLORS[i])
 
             # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
             # --- (screen size may be different from Kinect's color frame size) 
