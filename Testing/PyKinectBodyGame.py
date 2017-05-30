@@ -44,7 +44,7 @@ class BodyGameRuntime(object):
         self._bodies = None
 
 
-    def draw_body_point(self, joints, jointPoints, color, joint0):
+    def draw_ind_point(self, joints, jointPoints, color, joint0):
         joint0State = joints[joint0].TrackingState;
 
         if (joint0State == PyKinectV2.TrackingState_NotTracked)
@@ -60,11 +60,10 @@ class BodyGameRuntime(object):
         except: # need to catch it due to possible invalid positions (with inf)
             pass
 
-    def draw_body(self, joints, jointPoints, color):
-
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_Head, PyKinectV2.JointType_Neck);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowRight, PyKinectV2.JointType_WristRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowLeft, PyKinectV2.JointType_WristLeft);
+    def draw_all_points(self, joints, jointPoints, color):
+        self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_Head);
+        self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
+        self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft);
 
 
 
