@@ -44,37 +44,26 @@ class BodyGameRuntime(object):
         self._bodies = None
 
 
-    def draw_body_bone(self, joints, jointPoints, color, joint0, joint1):
+    def draw_body_point(self, joints, jointPoints, color, joint0):
         joint0State = joints[joint0].TrackingState;
-        joint1State = joints[joint1].TrackingState;
 
-        # both joints are not tracked
-        if (joint0State == PyKinectV2.TrackingState_NotTracked) or (joint1State == PyKinectV2.TrackingState_NotTracked): 
+        if (joint0State == PyKinectV2.TrackingState_NotTracked)
             return
 
-        # both joints are not *really* tracked
-        if (joint0State == PyKinectV2.TrackingState_Inferred) and (joint1State == PyKinectV2.TrackingState_Inferred):
+        if (joint0State == PyKinectV2.TrackingState_Inferred)
             return
 
-        # ok, at least one is good 
-        start = (jointPoints[joint0].x, jointPoints[joint0].y)
-        end = (jointPoints[joint1].x, jointPoints[joint1].y)
+        center = (jointPoints[joint0].x, jointPoints[joint0].y)
 
         try:
-            pygame.draw.line(self._frame_surface, color, start, end, 8)
+            pygame.draw.line(self._frame_surface, color, center, 5, 0)
         except: # need to catch it due to possible invalid positions (with inf)
             pass
 
     def draw_body(self, joints, jointPoints, color):
-        # Torso
+
         self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_Head, PyKinectV2.JointType_Neck);
-
-
-    
-
         self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowRight, PyKinectV2.JointType_WristRight);
-
-
         self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowLeft, PyKinectV2.JointType_WristLeft);
 
 
