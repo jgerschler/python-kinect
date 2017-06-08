@@ -26,6 +26,7 @@ class BodyGameRuntime(object):
         pygame.init()
 
         self._infoObject = pygame.display.Info()
+        print(self._infoObject.current_w, self._infoObject.current_h)
         self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1, self._infoObject.current_h >> 1), 
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
 
@@ -64,9 +65,6 @@ class BodyGameRuntime(object):
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_Head);
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft);
-
-
-
 
     def draw_color_frame(self, frame, target_surface):
         target_surface.lock()
