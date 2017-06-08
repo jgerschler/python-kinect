@@ -37,6 +37,8 @@ class BodyGameRuntime(object):
         self._frame_surface = pygame.Surface((self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
         self._bodies = None
 
+        self._frame_surface.fill((255, 255, 255))
+
     def draw_ind_point(self, joints, jointPoints, color, joint0):
         joint0State = joints[joint0].TrackingState;
 
@@ -68,13 +70,9 @@ class BodyGameRuntime(object):
                     self._screen = pygame.display.set_mode(event.dict['size'], 
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
 
-            self._frame_surface.fill((255, 255, 255))
-
-            # --- Cool! We have a body frame, so can get skeletons
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
 
-            # --- draw skeletons to _frame_surface
             if self._bodies is not None: 
                 for i in range(0, self._kinect.max_body_count):
                     body = self._bodies.bodies[i]
@@ -82,7 +80,6 @@ class BodyGameRuntime(object):
                         continue 
                     
                     joints = body.joints 
-                    # convert joint coordinates to color space 
                     joint_points = self._kinect.body_joints_to_color_space(joints)
                     self.draw_all_points(joints, joint_points, SKELETON_COLORS[i])
 
