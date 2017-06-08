@@ -26,7 +26,6 @@ class BodyGameRuntime(object):
         pygame.init()
 
         self._infoObject = pygame.display.Info()
-        print(self._infoObject.current_w, self._infoObject.current_h)
         self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1, self._infoObject.current_h >> 1), 
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
 
@@ -34,16 +33,9 @@ class BodyGameRuntime(object):
 
         self._done = False
         self._clock = pygame.time.Clock()
-
-        # Kinect runtime object, color and body frames 
         self._kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
-
-        # back buffer surface for getting Kinect color frames, 32bit color, width and height equal to the Kinect color frame size
         self._frame_surface = pygame.Surface((self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
-
-        # stored skeleton data 
         self._bodies = None
-
 
     def draw_ind_point(self, joints, jointPoints, color, joint0):
         joint0State = joints[joint0].TrackingState;
