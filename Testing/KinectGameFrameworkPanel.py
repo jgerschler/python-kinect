@@ -66,13 +66,6 @@ class BodyGameRuntime(object):
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft);
 
-    def draw_color_frame(self, frame, target_surface):
-        target_surface.lock()
-        address = self._kinect.surface_as_array(target_surface.get_buffer())
-        ctypes.memmove(address, frame.ctypes.data, frame.size)
-        del address
-        target_surface.unlock()
-
     def run(self):
         while not self._done:
             for event in pygame.event.get():
@@ -82,11 +75,8 @@ class BodyGameRuntime(object):
                 elif event.type == pygame.VIDEORESIZE:
                     self._screen = pygame.display.set_mode(event.dict['size'], 
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
-                    
-            if self._kinect.has_new_color_frame():
-                frame = self._kinect.get_last_color_frame()
-                self.draw_color_frame(frame, self._frame_surface)
-                frame = None
+
+            self._frame_surface.fill((255, 255, 255))
 
             # --- Cool! We have a body frame, so can get skeletons
             if self._kinect.has_new_body_frame(): 
@@ -112,9 +102,6 @@ class BodyGameRuntime(object):
             self._screen.blit(surface_to_draw, (0,0))
             surface_to_draw = None
             pygame.display.update()
-
-            # --- Go ahead and update the screen with what we've drawn.
-            pygame.display.flip()
 
             # --- Limit to 60 frames per second
             self._clock.tick(60)
