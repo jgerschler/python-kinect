@@ -12,13 +12,8 @@ if sys.hexversion >= 0x03000000:# check python version
 else:
     import thread
 
-SKELETON_COLORS = [pygame.color.THECOLORS["red"], 
-                  pygame.color.THECOLORS["blue"], 
-                  pygame.color.THECOLORS["green"], 
-                  pygame.color.THECOLORS["orange"], 
-                  pygame.color.THECOLORS["purple"], 
-                  pygame.color.THECOLORS["yellow"], 
-                  pygame.color.THECOLORS["violet"]]
+
+TRACKING_COLOR = pygame.color.Color("purple")
 
 
 class BodyGameRuntime(object):
@@ -73,7 +68,7 @@ class BodyGameRuntime(object):
                 
                 joints = body.joints 
                 joint_points = self._kinect.body_joints_to_color_space(joints)
-                self.draw_all_points(joints, joint_points, SKELETON_COLORS[0])
+                self.draw_all_points(joints, joint_points, TRACKING_COLOR)
 
             # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
             # --- (screen size may be different from Kinect's color frame size) 
