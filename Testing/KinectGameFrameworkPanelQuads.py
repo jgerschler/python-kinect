@@ -47,8 +47,9 @@ class BodyGameRuntime(object):
         except: # need to catch it due to possible invalid positions (with inf)
             pass
 
-    def draw_all_points(self, joints, jointPoints, color):
+    def update_screen(self, joints, jointPoints, color):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
+        
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_Head);
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft);
@@ -69,7 +70,7 @@ class BodyGameRuntime(object):
                 
                 joints = body.joints 
                 joint_points = self._kinect.body_joints_to_color_space(joints)
-                self.draw_all_points(joints, joint_points, TRACKING_COLOR)
+                self.update_screen(joints, joint_points, TRACKING_COLOR)
 
             # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
             # --- (screen size may be different from Kinect's color frame size) 
