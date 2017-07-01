@@ -67,14 +67,13 @@ class BodyGameRuntime(object):
                 self._bodies = self._kinect.get_last_body_frame()
 
             if self._bodies is not None: 
-                for i in range(0, self._kinect.max_body_count):
-                    body = self._bodies.bodies[i]
-                    if not body.is_tracked: 
-                        continue 
-                    
-                    joints = body.joints 
-                    joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.draw_all_points(joints, joint_points, SKELETON_COLORS[i])
+                body = self._bodies.bodies[0]
+                if not body.is_tracked: 
+                    continue 
+                
+                joints = body.joints 
+                joint_points = self._kinect.body_joints_to_color_space(joints)
+                self.draw_all_points(joints, joint_points, SKELETON_COLORS[0])
 
             # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
             # --- (screen size may be different from Kinect's color frame size) 
