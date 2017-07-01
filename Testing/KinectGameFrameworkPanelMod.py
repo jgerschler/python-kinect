@@ -48,6 +48,7 @@ class BodyGameRuntime(object):
             pass
 
     def draw_all_points(self, joints, jointPoints, color):
+        self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_Head);
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft);
