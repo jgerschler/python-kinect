@@ -42,10 +42,7 @@ class BodyGameRuntime(object):
     def draw_ind_point(self, joints, jointPoints, color, joint0):
         joint0State = joints[joint0].TrackingState;
 
-        if (joint0State == PyKinectV2.TrackingState_NotTracked):
-            return
-
-        if (joint0State == PyKinectV2.TrackingState_Inferred):
+        if joint0State == PyKinectV2.TrackingState_NotTracked or joint0State == PyKinectV2.TrackingState_Inferred:
             return
 
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
@@ -65,10 +62,6 @@ class BodyGameRuntime(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._done = True
-
-                elif event.type == pygame.VIDEORESIZE:
-                    self._screen = pygame.display.set_mode(event.dict['size'], 
-                                               pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
 
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
