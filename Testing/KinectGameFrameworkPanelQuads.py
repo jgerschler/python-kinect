@@ -32,7 +32,22 @@ class BodyGameRuntime(object):
         self._frame_surface = pygame.Surface((self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
         self._bodies = None
 
+        self.test_word0 = "Volition"
+        self.test_word1 = "Nullify"
+        self.test_word2 = "Impute"
+
         self._frame_surface.fill((255, 255, 255))
+
+    def text_objects(self, text, font):
+        text_surface = font.render(text, True, (0, 0, 0))
+        return text_surface, text_surface.get_rect()
+
+    def message_display(self, text, loc_tuple, loc_int):# loc_int: 1 center, 2 top left, 3 bottom left, 4 bottom right, 5 top right
+        text_surf, text_rect = self.text_objects(text, pygame.font.Font('arial.ttf', 64))# improve this section
+        loc_dict = {1:'text_rect.center', 2:'text_rect.topleft', 3:'text_rect.bottomleft', 4:'text_rect.bottomright', 5:'text_rect.topright'}
+        exec(loc_dict[loc_int] + ' = loc_tuple')
+        self._frame_surface.blit(text_surf, text_rect)
+        return text_rect 
 
     def draw_ind_point(self, joints, jointPoints, color, joint0):
         joint0State = joints[joint0].TrackingState;
@@ -49,6 +64,8 @@ class BodyGameRuntime(object):
 
     def update_screen(self, joints, jointPoints, color):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
+
+        rect0 = self.message_display(self.test_word0, (300, 200), 1)
         
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_Head);
         self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
@@ -92,4 +109,3 @@ class BodyGameRuntime(object):
 __main__ = "Kinect v2 Game Framework Test"
 game = BodyGameRuntime();
 game.run();
-

@@ -91,4 +91,3 @@ class BodyGameRuntime(object):
 __main__ = "Kinect v2 Game Framework Test"
 game = BodyGameRuntime();
 game.run();
-
