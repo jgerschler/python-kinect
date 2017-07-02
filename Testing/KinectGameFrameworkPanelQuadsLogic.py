@@ -14,6 +14,7 @@ else:
 
 
 TRACKING_COLOR = pygame.color.Color("purple")
+HIGHLIGHT_COLOR = pygame.color.Color("green")
 
 
 class BodyGameRuntime(object):
@@ -49,27 +50,33 @@ class BodyGameRuntime(object):
         self._frame_surface.blit(text_surf, text_rect)
         return text_rect 
 
-    def draw_ind_point(self, joints, jointPoints, color, joint0):
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect, joint0):
         joint0State = joints[joint0].TrackingState;
-
+        
         if joint0State == PyKinectV2.TrackingState_NotTracked or joint0State == PyKinectV2.TrackingState_Inferred:
             return
 
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
-        try:
-            pygame.draw.circle(self._frame_surface, color, center, 5, 0)
-        except: # need to catch it due to possible invalid positions (with inf)
-            pass
+        if rect.collidepoint(center):
+            try:
+                pygame.draw.circle(self._frame_surface, highlight_color, center, 10, 0)
+            except: # need to catch it due to possible invalid positions (with inf)
+                pass
+        else:
+            try:
+                pygame.draw.circle(self._frame_surface, color, center, 10, 0)
+            except: # need to catch it due to possible invalid positions (with inf)
+                pass
 
-    def update_screen(self, joints, jointPoints, color):
+    def update_screen(self, joints, jointPoints, color, highlight_color):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
         rect0 = self.message_display(self.test_word0, (300, 200), 1)
-        
-        self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_Head);
-        self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
-        self.draw_ind_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft);
+
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_Head);
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_WristLeft);     
 
     def run(self):
         while not self._done:
@@ -80,14 +87,15 @@ class BodyGameRuntime(object):
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
 
-            if self._bodies is not None: 
-                body = self._bodies.bodies[0]
-                if not body.is_tracked: 
-                    continue 
-                
-                joints = body.joints 
-                joint_points = self._kinect.body_joints_to_color_space(joints)
-                self.update_screen(joints, joint_points, TRACKING_COLOR)
+            if self._bodies is not None:
+                for i in range(0, self._kinect.max_body_count):
+                    body = self._bodies.bodies[i]
+                    if not body.is_tracked: 
+                        continue 
+                    
+                    joints = body.joints 
+                    joint_points = self._kinect.body_joints_to_color_space(joints)
+                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR)
 
             # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
             # --- (screen size may be different from Kinect's color frame size) 
