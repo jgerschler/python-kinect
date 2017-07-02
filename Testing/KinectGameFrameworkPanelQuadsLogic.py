@@ -60,21 +60,21 @@ class BodyGameRuntime(object):
 
         if rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
             try:
-                pygame.draw.circle(self._frame_surface, highlight_color, center, 10, 0)
+                pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
             except: # need to catch it due to possible invalid positions (with inf)
                 pass
         else:
             try:
-                pygame.draw.circle(self._frame_surface, color, center, 10, 0)
+                pygame.draw.circle(self._frame_surface, color, center, 20, 0)
             except: # need to catch it due to possible invalid positions (with inf)
                 pass
 
     def update_screen(self, joints, jointPoints, color, highlight_color):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
-        rect0 = self.message_display(self.test_word0, (500, 300), 1)
-        rect1 = self.message_display(self.test_word1, (700, 300), 1)
-        rect2 = self.message_display(self.test_word2, (900, 300), 1)
+        rect0 = self.message_display(self.test_word0, (300, 300), 1)
+        rect1 = self.message_display(self.test_word1, (self._frame_surface.get_width() / 2, 300), 1)
+        rect2 = self.message_display(self.test_word2, (self._frame_surface.get_width() - 300, 300), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, rect1, rect2, PyKinectV2.JointType_Head);
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, rect1, rect2, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
