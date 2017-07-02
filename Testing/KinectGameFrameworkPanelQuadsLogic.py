@@ -50,7 +50,7 @@ class BodyGameRuntime(object):
         self._frame_surface.blit(text_surf, text_rect)
         return text_rect 
 
-    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect, joint0):
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0):
         joint0State = joints[joint0].TrackingState;
         
         if joint0State == PyKinectV2.TrackingState_NotTracked or joint0State == PyKinectV2.TrackingState_Inferred:
@@ -58,7 +58,7 @@ class BodyGameRuntime(object):
 
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
-        if rect.collidepoint(center):
+        if rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
             try:
                 pygame.draw.circle(self._frame_surface, highlight_color, center, 10, 0)
             except: # need to catch it due to possible invalid positions (with inf)
@@ -73,10 +73,12 @@ class BodyGameRuntime(object):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
         rect0 = self.message_display(self.test_word0, (500, 300), 1)
+        rect1 = self.message_display(self.test_word1, (700, 300), 1)
+        rect2 = self.message_display(self.test_word2, (900, 300), 1)
 
-        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_Head);
-        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
-        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_WristLeft);     
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, rect1, rect2, PyKinectV2.JointType_Head);
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, rect1, rect2, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, rect1, rect2, PyKinectV2.JointType_WristLeft);     
 
     def run(self):
         while not self._done:
