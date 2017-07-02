@@ -72,7 +72,7 @@ class BodyGameRuntime(object):
     def update_screen(self, joints, jointPoints, color, highlight_color):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
-        rect0 = self.message_display(self.test_word0, (300, 200), 1)
+        rect0 = self.message_display(self.test_word0, (500, 300), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_Head);
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0, PyKinectV2.JointType_WristRight); # may change to PyKinectV2.JointType_ElbowRight
