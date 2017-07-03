@@ -6,6 +6,7 @@ import ctypes
 import _ctypes
 import pygame
 import sys
+import random
 
 if sys.hexversion >= 0x03000000:# check python version
     import _thread as thread
@@ -38,10 +39,6 @@ class BodyGameRuntime(object):
 
         self.vocab_dict = {"cellphone":"noun", "blue":"adjective", "ameliorate":"verb"}
 
-        self.test_word0 = "Volition"
-        self.test_word1 = "Nullify"
-        self.test_word2 = "Impute"
-
         self._frame_surface.fill((255, 255, 255))
 
     def text_objects(self, text, font):
@@ -57,7 +54,7 @@ class BodyGameRuntime(object):
         self._frame_surface.blit(text_surf, text_rect)
         return text_rect 
 
-    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0):
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0, words, pos):
         joint0State = joints[joint0].TrackingState;
         
         if (joint0State == PyKinectV2.TrackingState_NotTracked or
@@ -66,8 +63,9 @@ class BodyGameRuntime(object):
 
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
-        if (rect0.collidepoint(center) or rect1.collidepoint(center) or
-            rect2.collidepoint(center)):
+        if ((rect0.collidepoint(center) and self.vocab_dict[words[0]] == pos) or
+            (rect1.collidepoint(center) and self.vocab_dict[words[1]] == pos) or
+            (rect2.collidepoint(center) and self.vocab_dict[words[2]] == pos)):
             try:
                 pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
             except: # need to catch it due to possible invalid positions (with inf)
@@ -78,22 +76,26 @@ class BodyGameRuntime(object):
             except: # need to catch it due to possible invalid positions (with inf)
                 pass
 
-    def update_screen(self, joints, jointPoints, color, highlight_color):
+    def update_screen(self, joints, jointPoints, color, highlight_color, words, pos):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
-        rect0 = self.message_display(self.test_word0, (300, 300), 1)
-        rect1 = self.message_display(self.test_word1, (self._frame_surface.get_width() / 2, 300), 1)
-        rect2 = self.message_display(self.test_word2, (self._frame_surface.get_width() - 300, 300), 1)
+        self.message_display("Touch the {0}.".format(pos), (300, 800), 1)
+        rect0 = self.message_display(words[0], (300, 300), 1)
+        rect1 = self.message_display(words[1], (self._frame_surface.get_width() / 2, 300), 1)
+        rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 300), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_Head);
+                            rect1, rect2, PyKinectV2.JointType_Head, words, pos);
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristRight);
+                            rect1, rect2, PyKinectV2.JointType_WristRight, words, pos);
         # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristLeft);     
+                            rect1, rect2, PyKinectV2.JointType_WristLeft, words, pos);     
 
     def run(self):
+        words = random.sample(list(self.vocab_dict), 3)
+        pos = self.vocab_dict[words[0]]
+        random.shuffle(words)
         while not self._done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -110,7 +112,7 @@ class BodyGameRuntime(object):
                     
                     joints = body.joints 
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR)
+                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, pos)
 
             # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
             # --- (screen size may be different from Kinect's color frame size) 
