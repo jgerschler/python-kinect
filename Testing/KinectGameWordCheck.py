@@ -73,7 +73,7 @@ class BodyGameRuntime(object):
         else:
             try:
                 pygame.draw.circle(self._frame_surface, color, center, 20, 0)
-            except: # need to catch it due to possible invalid positions (with inf)
+            except:
                 pass
 
     def update_screen(self, joints, jointPoints, color, highlight_color, words, pos):
@@ -114,8 +114,6 @@ class BodyGameRuntime(object):
                     joint_points = self._kinect.body_joints_to_color_space(joints)
                     self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, pos)
 
-            # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
-            # --- (screen size may be different from Kinect's color frame size) 
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
             target_height = int(h_to_w * self._screen.get_width())
             surface_to_draw = pygame.transform.scale(self._frame_surface,
@@ -124,10 +122,8 @@ class BodyGameRuntime(object):
             surface_to_draw = None
             pygame.display.update()
 
-            # --- Limit to 60 frames per second
             self._clock.tick(60)
 
-        # Close our Kinect sensor, close the window and quit.
         self._kinect.close()
         pygame.quit()
 
