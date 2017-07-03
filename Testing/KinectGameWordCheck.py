@@ -79,7 +79,7 @@ class BodyGameRuntime(object):
     def update_screen(self, joints, jointPoints, color, highlight_color, words, pos):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
-        self.message_display("Touch the {0}.".format(pos), (300, 800), 1)
+        self.message_display("Touch a(n) {0}.".format(pos), (300, 800), 1)
         rect0 = self.message_display(words[0], (300, 300), 1)
         rect1 = self.message_display(words[1], (self._frame_surface.get_width() / 2, 300), 1)
         rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 300), 1)
