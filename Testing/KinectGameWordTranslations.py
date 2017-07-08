@@ -21,7 +21,9 @@ HIGHLIGHT_COLOR = pygame.color.Color("red")
 class BodyGameRuntime(object):
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
 
+        self.beep_sound = pygame.mixer.Sound('audio\\beep.ogg')
         self._infoObject = pygame.display.Info()
         self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1,
                                                 self._infoObject.current_h >> 1),
@@ -72,6 +74,7 @@ class BodyGameRuntime(object):
         if ((rect0.collidepoint(center) and self.vocab_dict[words[0]] == selected_word_esp) or
             (rect1.collidepoint(center) and self.vocab_dict[words[1]] == selected_word_esp) or
             (rect2.collidepoint(center) and self.vocab_dict[words[2]] == selected_word_esp)):
+            self.beep_sound.play()
             self.run()
         elif rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
             try:
