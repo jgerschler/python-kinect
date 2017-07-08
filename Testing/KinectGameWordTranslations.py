@@ -91,9 +91,9 @@ class BodyGameRuntime(object):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
         self.message_display(selected_word_esp, (300, 800), 1)
-        rect0 = self.message_display(words[0], (300, 300), 1)
-        rect1 = self.message_display(words[1], (self._frame_surface.get_width() / 2, 300), 1)
-        rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 300), 1)
+        rect0 = self.message_display(words[0], (300, 100), 1)
+        rect1 = self.message_display(words[1], (self._frame_surface.get_width() / 2, 100), 1)
+        rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 100), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
                             rect1, rect2, PyKinectV2.JointType_Head, words, selected_word_esp);
