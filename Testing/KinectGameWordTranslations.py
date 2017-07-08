@@ -15,7 +15,7 @@ else:
 
 
 TRACKING_COLOR = pygame.color.Color("purple")
-HIGHLIGHT_COLOR = pygame.color.Color("green")
+HIGHLIGHT_COLOR = pygame.color.Color("red")
 
 
 class BodyGameRuntime(object):
@@ -73,10 +73,11 @@ class BodyGameRuntime(object):
             (rect1.collidepoint(center) and self.vocab_dict[words[1]] == selected_word_esp) or
             (rect2.collidepoint(center) and self.vocab_dict[words[2]] == selected_word_esp)):
             self.run()
-##            try:
-##                pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
-##            except: # need to catch it due to possible invalid positions (with inf)
-##                pass
+        elif rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
+            try:
+                pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
+            except: # need to catch it due to possible invalid positions (with inf)
+                pass
         else:
             try:
                 pygame.draw.circle(self._frame_surface, color, center, 20, 0)
