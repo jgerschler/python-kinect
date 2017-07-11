@@ -1,3 +1,4 @@
+# python 3
 from pykinect2 import PyKinectV2
 from pykinect2.PyKinectV2 import *
 from pykinect2 import PyKinectRuntime
@@ -8,10 +9,7 @@ import pygame
 import sys
 import random
 
-if sys.hexversion >= 0x03000000:# check python version
-    import _thread as thread
-else:
-    import thread
+#import _thread as thread
 
 
 TRACKING_COLOR = pygame.color.Color("purple")
@@ -88,7 +86,7 @@ class BodyGameRuntime(object):
             except:
                 pass
 
-    def update_screen(self, joints, jointPoints, color, highlight_color, words, selected_word_esp):
+    def update_screen(self, joints, jointPoints, color, highlight_color, words, selected_word_esp, seconds):
         self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
 
         self.message_display(selected_word_esp, (300, 800), 1)
@@ -96,28 +94,34 @@ class BodyGameRuntime(object):
         rect1 = self.message_display(words[1], (self._frame_surface.get_width() / 2, 100), 1)
         rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 300), 1)
         self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
+        self.message_display(str(seconds), (self._frame_surface.get_width() - 300, 800), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_Head, words, selected_word_esp);
+                            rect1, rect2, PyKinectV2.JointType_Head, words, selected_word_esp)
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristRight, words, selected_word_esp);
+                            rect1, rect2, PyKinectV2.JointType_WristRight, words, selected_word_esp)
         # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristLeft, words, selected_word_esp);     
+                            rect1, rect2, PyKinectV2.JointType_WristLeft, words, selected_word_esp)
 
-    def run(self):
-        self.score += 1
-        print(self.score)
+    def end_game(self):
+        pass
+
+    def new_game(self):
         start_ticks = pygame.time.get_ticks()
         words = random.sample(list(self.vocab_dict), 3)
         selected_word_esp = self.vocab_dict[words[0]]
         random.shuffle(words)
+        
         while not self.finished:
             seconds = (pygame.time.get_ticks() - start_ticks)/1000
+            if seconds >= GAME_TIME:
+                self.end_game()
+                
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.finished = True
-
+                             
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
 
@@ -129,7 +133,7 @@ class BodyGameRuntime(object):
                     
                     joints = body.joints 
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, selected_word_esp)
+                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, selected_word_esp, seconds)
 
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
             target_height = int(h_to_w * self._screen.get_width())
@@ -140,11 +144,21 @@ class BodyGameRuntime(object):
             pygame.display.update()
 
             self._clock.tick(60)
+            
+        self.end_game()
+
+    def run(self):
+        while not self.finished:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finished = True
+                if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                    self.new_game()
 
         self._kinect.close()
         pygame.quit()
 
 
-__main__ = "Kinect v2 Game Framework Test"
+__main__ = "Kinect v2 Vocabulary Game"
 game = BodyGameRuntime();
 game.run();
