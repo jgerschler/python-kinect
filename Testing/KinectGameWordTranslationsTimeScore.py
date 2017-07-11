@@ -109,6 +109,7 @@ class BodyGameRuntime(object):
     def end_game(self):
         self._frame_surface.fill(BG_COLOR)
         self.message_display("Score: {}".format(self.score), (self._frame_surface.get_width() / 2, self._frame_surface.get_height() / 2), 1)
+        pygame.display.update()
         self.run()
 
     def new_round(self):
@@ -163,6 +164,6 @@ class BodyGameRuntime(object):
         pygame.quit()
 
 
-__main__ = "Kinect v2 Vocabulary Game"
-game = BodyGameRuntime();
-game.run();
+if __name__ == "__main__":
+    game = BodyGameRuntime()
+    game.run()
