@@ -9,13 +9,13 @@ import pygame
 import sys
 import random
 
-#import _thread as thread
+# import _thread as thread
 
 
 TRACKING_COLOR = pygame.color.Color("purple")
 HIGHLIGHT_COLOR = pygame.color.Color("red")
 BG_COLOR = pygame.color.Color("white")
-GAME_TIME = 60
+GAME_TIME = 10# seconds
 
 
 class BodyGameRuntime(object):
@@ -39,7 +39,7 @@ class BodyGameRuntime(object):
                                               self._kinect.color_frame_desc.Height), 0, 32)
         self._bodies = None
 
-        self.score = -1
+        self.score = 0
 
         self.vocab_dict = {"beach":"playa", "desert":"desierto", "forest":"bosque",
                            "jungle":"selva", "hill":"loma", "island":"isla",
@@ -109,17 +109,24 @@ class BodyGameRuntime(object):
     def end_game(self):
         self._frame_surface.fill(BG_COLOR)
         self.message_display("Score: {}".format(self.score), (self._frame_surface.get_width() / 2, self._frame_surface.get_height() / 2), 1)
+        h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+        target_height = int(h_to_w * self._screen.get_width())
+        surface_to_draw = pygame.transform.scale(self._frame_surface,
+                                                     (self._screen.get_width(), target_height));
+        self._screen.blit(surface_to_draw, (0,0))
+        surface_to_draw = None
         pygame.display.update()
+        pygame.time.delay(3000)
+        print("fired")
         self.run()
 
     def new_round(self):
-        start_ticks = pygame.time.get_ticks()
         words = random.sample(list(self.vocab_dict), 3)
         selected_word_esp = self.vocab_dict[words[0]]
         random.shuffle(words)
         
         while not self.finished:
-            seconds = (pygame.time.get_ticks() - start_ticks)/1000
+            seconds = int((pygame.time.get_ticks() - self.start_ticks)/1000)
             if seconds >= GAME_TIME:
                 self.end_game()
                 
@@ -153,16 +160,17 @@ class BodyGameRuntime(object):
         self.end_game()
 
     def run(self):
+        self.score = 0
         while not self.finished:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.finished = True
                 if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                    self.start_ticks = pygame.time.get_ticks()
                     self.new_round()
 
         self._kinect.close()
         pygame.quit()
-
 
 if __name__ == "__main__":
     game = BodyGameRuntime()
