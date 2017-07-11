@@ -1,2 +1,2 @@
 # python-kinect
-assorted projects using the pykinect2 module
+assorted simple projects using the pykinect2 module
