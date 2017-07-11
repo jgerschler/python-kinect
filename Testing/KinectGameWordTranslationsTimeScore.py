@@ -1,4 +1,8 @@
-# python 3
+# for python 3
+# You'll need to customize this according to your needs. Proper orientation of
+# the kinect is vital; if participants are able to maintain their head or wrists
+# continuously inside the word rects, they will repeatedly trigger the collision
+# detection
 from pykinect2 import PyKinectV2
 from pykinect2.PyKinectV2 import *
 from pykinect2 import PyKinectRuntime
@@ -15,7 +19,7 @@ import random
 TRACKING_COLOR = pygame.color.Color("purple")
 HIGHLIGHT_COLOR = pygame.color.Color("red")
 BG_COLOR = pygame.color.Color("white")
-GAME_TIME = 10# seconds
+GAME_TIME = 20# seconds
 
 
 class BodyGameRuntime(object):
@@ -24,6 +28,7 @@ class BodyGameRuntime(object):
         pygame.mixer.init()
 
         self.beep_sound = pygame.mixer.Sound('audio\\beep.ogg')
+        self.buzz_sound = pygame.mixer.Sound('audio\\buzz.ogg')
         self._infoObject = pygame.display.Info()
         self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1,
                                                 self._infoObject.current_h >> 1),
@@ -80,6 +85,7 @@ class BodyGameRuntime(object):
         elif rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
             try:
                 pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
+                self.buzz_sound.play()               
             except: # need to catch it due to possible invalid positions (with inf)
                 pass
         else:
@@ -117,13 +123,13 @@ class BodyGameRuntime(object):
         surface_to_draw = None
         pygame.display.update()
         pygame.time.delay(3000)
-        print("fired")
         self.run()
 
     def new_round(self):
         words = random.sample(list(self.vocab_dict), 3)
         selected_word_esp = self.vocab_dict[words[0]]
         random.shuffle(words)
+        pygame.time.delay(500)
         
         while not self.finished:
             seconds = int((pygame.time.get_ticks() - self.start_ticks)/1000)
