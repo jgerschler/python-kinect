@@ -14,6 +14,7 @@ import random
 
 TRACKING_COLOR = pygame.color.Color("purple")
 HIGHLIGHT_COLOR = pygame.color.Color("red")
+BG_COLOR = pygame.color.Color("white")
 GAME_TIME = 60
 
 
@@ -73,8 +74,9 @@ class BodyGameRuntime(object):
         if ((rect0.collidepoint(center) and self.vocab_dict[words[0]] == selected_word_esp) or
             (rect1.collidepoint(center) and self.vocab_dict[words[1]] == selected_word_esp) or
             (rect2.collidepoint(center) and self.vocab_dict[words[2]] == selected_word_esp)):
+            self.score += 1
             self.beep_sound.play()
-            self.run()
+            self.new_round()
         elif rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
             try:
                 pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
@@ -87,7 +89,7 @@ class BodyGameRuntime(object):
                 pass
 
     def update_screen(self, joints, jointPoints, color, highlight_color, words, selected_word_esp, seconds):
-        self._frame_surface.fill((255, 255, 0))# blank screen before drawing points
+        self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
         self.message_display(selected_word_esp, (300, 800), 1)
         rect0 = self.message_display(words[0], (300, 300), 1)
@@ -105,9 +107,11 @@ class BodyGameRuntime(object):
                             rect1, rect2, PyKinectV2.JointType_WristLeft, words, selected_word_esp)
 
     def end_game(self):
-        pass
+        self._frame_surface.fill(BG_COLOR)
+        self.message_display("Score: {}".format(self.score), (self._frame_surface.get_width() / 2, self._frame_surface.get_height() / 2), 1)
+        self.run()
 
-    def new_game(self):
+    def new_round(self):
         start_ticks = pygame.time.get_ticks()
         words = random.sample(list(self.vocab_dict), 3)
         selected_word_esp = self.vocab_dict[words[0]]
@@ -153,7 +157,7 @@ class BodyGameRuntime(object):
                 if event.type == pygame.QUIT:
                     self.finished = True
                 if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-                    self.new_game()
+                    self.new_round()
 
         self._kinect.close()
         pygame.quit()
