@@ -73,7 +73,7 @@ class BodyGameRuntime(object):
         frag_list = [' '.join(words) for words in frag_list][0:3]
         return frag_list
 
-    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0, frag_list):
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0, frag_list):# continue work here -- build sentence and check fragments etc.
         joint0State = joints[joint0].TrackingState;
         
         if (joint0State == PyKinectV2.TrackingState_NotTracked or
