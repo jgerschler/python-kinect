@@ -54,7 +54,7 @@ class BodyGameRuntime(object):
 
     def message_display(self, text, loc_tuple, loc_int):
         # loc_int: 1 center, 2 top left, 3 bottom left, 4 bottom right, 5 top right
-        text_surf, text_rect = self.text_objects(text, pygame.font.Font('arial.ttf', 20))
+        text_surf, text_rect = self.text_objects(text, pygame.font.Font('arial.ttf', 36))
         loc_dict = {1:'text_rect.center', 2:'text_rect.topleft', 3:'text_rect.bottomleft',
                     4:'text_rect.bottomright', 5:'text_rect.topright'}
         exec(loc_dict[loc_int] + ' = loc_tuple')
@@ -103,9 +103,6 @@ class BodyGameRuntime(object):
                 self.buzz_sound.play()
                 self.new_round()
 
-
-
-
         elif rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
             try:
                 pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
@@ -150,7 +147,7 @@ class BodyGameRuntime(object):
         self.run()
 
     def new_round(self):
-        self.sentence = random.sample(self.sentence_list, 1)
+        self.sentence = random.sample(self.sentence_list, 1)[0]
         built_frag = ""
         frag_list = self.fragment_sentence(self.sentence)
         random.shuffle(frag_list)
