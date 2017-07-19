@@ -41,11 +41,10 @@ class BodyGameRuntime(object):
 
         self.score = 0
 
-        self.vocab_dict = {"beach":"playa", "desert":"desierto", "forest":"bosque",
-                           "jungle":"selva", "hill":"loma", "island":"isla",
-                           "lake":"lago", "mountain":"montaña", "ocean":"oceano",
-                           "river":"rio", "valley":"valle", "basin":"cuenca",
-                           "volcano":"volcano", "waterfall":"cascada", "creek":"arroyo"}
+        self.sentence_list = ["It is not acceptable to eat with your mouth open",
+                              "It is acceptable to use a napkin",
+                              "You shouldn't talk with food in your mouth",
+                              "You shouldn't use bad words at the dinner table"]
 
         self._frame_surface.fill((255, 255, 255))
 
@@ -55,14 +54,26 @@ class BodyGameRuntime(object):
 
     def message_display(self, text, loc_tuple, loc_int):
         # loc_int: 1 center, 2 top left, 3 bottom left, 4 bottom right, 5 top right
-        text_surf, text_rect = self.text_objects(text, pygame.font.Font('arial.ttf', 64))
+        text_surf, text_rect = self.text_objects(text, pygame.font.Font('arial.ttf', 20))
         loc_dict = {1:'text_rect.center', 2:'text_rect.topleft', 3:'text_rect.bottomleft',
                     4:'text_rect.bottomright', 5:'text_rect.topright'}
         exec(loc_dict[loc_int] + ' = loc_tuple')
         self._frame_surface.blit(text_surf, text_rect)
         return text_rect 
 
-    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0, words, selected_word_esp):
+    def fragment_sentence(self, sentence):
+        sentence_list = sentence.split()
+        sentence_word_count = len(sentence_list)
+        max_frag_size = round(sentence_word_count/3)
+        frag_list = []
+        i = 0
+        while i*max_frag_size <= sentence_word_count:
+            frag_list.append(sentence_list[i*max_frag_size:(i + 1)*max_frag_size])
+            i += 1 
+        frag_list = [' '.join(words) for words in frag_list][0:3]
+        return frag_list
+
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0, frag_list):
         joint0State = joints[joint0].TrackingState;
         
         if (joint0State == PyKinectV2.TrackingState_NotTracked or
@@ -89,23 +100,23 @@ class BodyGameRuntime(object):
             except:
                 pass
 
-    def update_screen(self, joints, jointPoints, color, highlight_color, words, selected_word_esp, seconds):
+    def update_screen(self, joints, jointPoints, color, highlight_color, frag_list, seconds):
         self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
-        self.message_display(selected_word_esp, (300, 800), 1)
-        rect0 = self.message_display(words[0], (300, 300), 1)
-        rect1 = self.message_display(words[1], (self._frame_surface.get_width() / 2, 100), 1)
-        rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 300), 1)
+##        self.message_display(selected_word_esp, (300, 800), 1)
+        rect0 = self.message_display(frag_list[0], (300, 300), 1)
+        rect1 = self.message_display(frag_list[1], (self._frame_surface.get_width() / 2, 100), 1)
+        rect2 = self.message_display(frag_list[2], (self._frame_surface.get_width() - 300, 300), 1)
         self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
         self.message_display(str(seconds), (self._frame_surface.get_width() - 300, 800), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_Head, words, selected_word_esp)
+                            rect1, rect2, PyKinectV2.JointType_Head, frag_list)
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristRight, words, selected_word_esp)
+                            rect1, rect2, PyKinectV2.JointType_WristRight, frag_list)
         # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristLeft, words, selected_word_esp)
+                            rect1, rect2, PyKinectV2.JointType_WristLeft, frag_list)
 
     def end_game(self):
         self._frame_surface.fill(BG_COLOR)
@@ -121,9 +132,9 @@ class BodyGameRuntime(object):
         self.run()
 
     def new_round(self):
-        words = random.sample(list(self.vocab_dict), 3)
-        selected_word_esp = self.vocab_dict[words[0]]
-        random.shuffle(words)
+        self.sentence = random.sample(self.sentence_list, 1)
+        frag_list = self.fragment_sentence(self.sentence)
+        random.shuffle(frag_list)
         pygame.time.delay(500)
         
         while not self.finished:
@@ -146,7 +157,7 @@ class BodyGameRuntime(object):
                     
                     joints = body.joints 
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, selected_word_esp, seconds)
+                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, frag_list, seconds)
 
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
             target_height = int(h_to_w * self._screen.get_width())
