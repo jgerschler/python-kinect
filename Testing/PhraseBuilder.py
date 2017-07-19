@@ -7,13 +7,8 @@ from pykinect2 import PyKinectV2
 from pykinect2.PyKinectV2 import *
 from pykinect2 import PyKinectRuntime
 
-import ctypes
-import _ctypes
 import pygame
-import sys
 import random
-
-# import _thread as thread
 
 
 TRACKING_COLOR = pygame.color.Color("purple")
