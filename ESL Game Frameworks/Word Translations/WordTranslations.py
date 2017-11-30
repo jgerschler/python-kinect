@@ -14,7 +14,7 @@ import random
 TRACKING_COLOR = pygame.color.Color("purple")
 HIGHLIGHT_COLOR = pygame.color.Color("red")
 BG_COLOR = pygame.color.Color("white")
-GAME_TIME = 20# seconds
+GAME_TIME = 60# seconds
 
 
 class BodyGameRuntime(object):
@@ -76,6 +76,7 @@ class BodyGameRuntime(object):
             (rect2.collidepoint(center) and self.vocab_dict[words[2]] == selected_word_esp)):
             self.score += 1
             self.beep_sound.play()
+            pygame.time.delay(500)
             self.new_round()
         elif rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
             try:
