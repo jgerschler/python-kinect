@@ -48,7 +48,12 @@ class BodyGameRuntime(object):
                               "You shouldn't talk with food in your mouth",
                               "You shouldn't use bad words at the dinner table",
                               "This is a test sentence for the game",
-                              "These sentences don't have any periods"]
+                              "These sentences don't have any periods",
+                              "Giraffes are herbivores, and don't eat elephants",
+                              "Elvia came to visit the teacher in his office",
+                              "My favorite fruits are rambutans and chirimoyas",
+                              "The cat likes to eat the dog's food",
+                              "Sometimes the dog gets angry and barks at the cat"]
 
         self._frame_surface.fill((255, 255, 255))
 
