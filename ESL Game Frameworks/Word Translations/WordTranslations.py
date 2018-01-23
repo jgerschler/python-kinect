@@ -128,8 +128,8 @@ class BodyGameRuntime(object):
         pygame.time.delay(500)
         
         while not self.finished:
-            seconds = int((pygame.time.get_ticks() - self.start_ticks)/1000)
-            if seconds >= GAME_TIME:
+            seconds = int(GAME_TIME - (pygame.time.get_ticks() - self.start_ticks)/1000)
+            if seconds <= 0:
                 self.end_game()
                 
             for event in pygame.event.get():
