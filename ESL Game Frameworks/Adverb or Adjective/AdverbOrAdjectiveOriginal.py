@@ -85,7 +85,6 @@ class BodyGameRuntime(object):
                            "Jenny ____ ate the last cookie.":["intentionally", "intentional"],
                            "He likes ____ music.":["irritating", "irritatingly"],
                            "Careful! That is a ___ dog!":["bad", "badly"],
-                           "She ___ called the police.":["quickly", "quick"],
                            "The man reacted ___ to the good news.":["speedily", "speedy"],
                            "Susana has always been a ____ girl.":["nice", "nicely"],
                            "The boys plunged into the ____ water.":["deep", "deeply"],
@@ -140,7 +139,7 @@ class BodyGameRuntime(object):
     def update_screen(self, joints, jointPoints, color, highlight_color, words, sentence, correct_word, seconds):
         self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
-        self.message_display(sentence, (300, 1000), 1)
+        self.message_display(sentence, (300, 1000), 2)
         rect0 = self.message_display(words[0], (300, 300), 1)
         rect1 = self.message_display(words[1], (self._frame_surface.get_width() - 300, 300), 1)
         self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
