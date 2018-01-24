@@ -41,30 +41,6 @@ class BodyGameRuntime(object):
 
         self.score = 0
 
-##        self.adj_adv_dict = {"active":"actively", "careful":"carefully", "cheerful":"cheerfully",
-##                            "comfortable":"comfortably", "continuous":"continuously",
-##                            "crazy":"crazily", "delightful":"delightfully", "creative":"creatively",
-##                            "destructive":"destructively", "powerful":"powerfully",
-##                            "firm":"firmly", "forceful":"forcefully", "glorious":"gloriously",
-##                            "hateful":"hatefully", "hopeful":"hopefully", "insulting":"insultingly",
-##                            "intention":"intentionally", "irritating":"irritatingly", "bad":"badly",
-##                            "quick":"quickly", "speedy":"speedily", "nice":"nicely", "deep":"deeply",
-##                            "brave":"bravely", "foolish":"foolishly", "lazy":"lazily", "rude":"rudely",
-##                            "perfect":"perfectly", "dangerous":"dangerously"}
-
-##        self.adj_adv_list = [["active", "actively"], ["careful", "carefully"], ["cheerful", "cheerfully"],
-##                             ["comfortable", "comfortably"], ["continuous", "continuously"],
-##                             ["crazy", "crazily"], ["delightful", "delightfully"],
-##                             ["creative", "creatively"], ["destructive", "destructively"],
-##                             ["powerful", "powerfully"], ["firm", "firmly"], ["forceful", "forcefully"],
-##                             ["glorious", "gloriously"], ["hateful", "hatefully"],
-##                             ["hopeful", "hopefully"], ["insulting", "insultingly"],
-##                             ["intention", "intentionally"], ["irritating", "irritatingly"],
-##                             ["bad", "badly"], ["quick", "quickly"], ["speedy", "speedily"],
-##                             ["nice", "nicely"], ["deep", "deeply"], ["brave", "bravely"],
-##                             ["foolish", "foolishly"], ["lazy", "lazily"], ["rude", "rudely"],
-##                             ["perfect", "perfectly"], ["dangerous", "dangerously"]]
-
         self.vocab_dict = {"People drive ____ these days.":["quickly", "quick"],
                            "She has an ____ dog.":["active", "actively"],
                            "He ____ opens the mail.":["carefully", "careful"],
@@ -93,6 +69,17 @@ class BodyGameRuntime(object):
                            "Mario is ____ and never does his homework.":["lazy", "lazily"],
                            "The teacher is very ____.":["rude", "rudely"],
                            "The girl plays soccer ____.":["perfectly", "perfect"],
+                           "It was an ____ crash.":["accidental", "accidentally"],
+                           "That is an ____ turtle!.":["angry", "angrily"],
+                           "She ____ ate her beans.":["happily", "happy"],
+                           "John spoke ____.":["seriously", "serious"],
+                           "Firulais is a ____ dog.":["loyal", "loyally"],
+                           "Margie yelled ____ into the night.":["blindly", "blind"],
+                           "He ran ____ toward me.":["wildly", "wild"],
+                           "Pedro is ____!":["innocent", "innocently"],
+                           "The gross man winked at her ____.":["sexually", "sexual"],
+                           "Concepcion is a ____ girlfriend.":["jealous", "jealously"],
+                           "Luis ____ goes to the bar.":["frequently", "frequent"],
                            "She is a ____ driver.":["dangerous", "dangerously"]}
 
         self._frame_surface.fill((255, 255, 255))
@@ -140,8 +127,8 @@ class BodyGameRuntime(object):
         self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
         self.message_display(sentence, (300, 1000), 2)
-        rect0 = self.message_display(words[0], (300, 300), 1)
-        rect1 = self.message_display(words[1], (self._frame_surface.get_width() - 300, 300), 1)
+        rect0 = self.message_display(words[0], (400, 300), 1)
+        rect1 = self.message_display(words[1], (self._frame_surface.get_width() - 400, 300), 1)
         self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
         self.message_display(str(seconds), (self._frame_surface.get_width() - 300, 800), 1)
 

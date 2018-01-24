@@ -69,6 +69,17 @@ class BodyGameRuntime(object):
                            "Mario is ____ and never does his homework.":["lazy", "lazily"],
                            "The teacher is very ____.":["rude", "rudely"],
                            "The girl plays soccer ____.":["perfectly", "perfect"],
+                           "It was an ____ crash.":["accidental", "accidentally"],
+                           "That is an ____ turtle!.":["angry", "angrily"],
+                           "She ____ ate her beans.":["happily", "happy"],
+                           "John spoke ____.":["seriously", "serious"],
+                           "Firulais is a ____ dog.":["loyal", "loyally"],
+                           "Margie yelled ____ into the night.":["blindly", "blind"],
+                           "He ran ____ toward me.":["wildly", "wild"],
+                           "Pedro is ____!":["innocent", "innocently"],
+                           "The gross man winked at her ____.":["sexually", "sexual"],
+                           "Concepcion is a ____ girlfriend.":["jealous", "jealously"],
+                           "Luis ____ goes to the bar.":["frequently", "frequent"],
                            "She is a ____ driver.":["dangerous", "dangerously"]}
 
         self._frame_surface.fill((255, 255, 255))
@@ -116,8 +127,8 @@ class BodyGameRuntime(object):
         self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
         self.message_display(sentence, (300, 900), 2)
-        rect0 = self.message_display(words[0], (300, 300), 1)
-        rect1 = self.message_display(words[1], (self._frame_surface.get_width() - 300, 300), 1)
+        rect0 = self.message_display(words[0], (400, 300), 1)
+        rect1 = self.message_display(words[1], (self._frame_surface.get_width() - 400, 300), 1)
         self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
         self.message_display(str(seconds), (self._frame_surface.get_width() - 300, 800), 1)
 
