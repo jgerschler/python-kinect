@@ -41,11 +41,53 @@ class BodyGameRuntime(object):
 
         self.score = 0
 
-        self.vocab_dict = {"quickly":"People drive ____ these days.", "desert":"desierto", "forest":"bosque",
-                           "jungle":"selva", "hill":"loma", "island":"isla",
-                           "lake":"lago", "mountain":"montaña", "ocean":"oceano",
-                           "river":"rio", "valley":"valle", "basin":"cuenca",
-                           "volcano":"volcano", "waterfall":"cascada", "creek":"arroyo"}
+        self.adj_adv_dict ={"active":"actively", "careful":"carefully", "cheerful":"cheerfully",
+                            "comfortable":"comfortably", "continuous":"continuously",
+                            "crazy":"crazily", "delightful":"delightfully", "creative":"creatively",
+                            "destructive":"destructively", "powerful":"powerfully",
+                            "firm":"firmly", "forceful":"forcefully", "glorious":"gloriously",
+                            "hateful":"hatefully", "hopeful":"hopefully", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "dangerous":"dangerously"}
+
+        self.vocab_dict = {"quickly":"People drive ____ these days.",
+                           "well":"Tenisha writes ____.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "fatly":"People drive ____ these days.",
+                           "interestingly":"People drive ____ these days."}
 
         self._frame_surface.fill((255, 255, 255))
 
