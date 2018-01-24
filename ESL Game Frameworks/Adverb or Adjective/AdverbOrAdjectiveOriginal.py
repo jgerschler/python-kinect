@@ -46,7 +46,11 @@ class BodyGameRuntime(object):
                             "crazy":"crazily", "delightful":"delightfully", "creative":"creatively",
                             "destructive":"destructively", "powerful":"powerfully",
                             "firm":"firmly", "forceful":"forcefully", "glorious":"gloriously",
-                            "hateful":"hatefully", "hopeful":"hopefully", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "":"", "dangerous":"dangerously"}
+                            "hateful":"hatefully", "hopeful":"hopefully", "insulting":"insultingly",
+                            "intention":"intentionally", "irritating":"irritatingly", "bad":"badly",
+                            "quick":"quickly", "speedy":"speedily", "nice":"nicely", "deep":"deeply",
+                            "brave":"bravely", "foolish":"foolishly", "lazy":"lazily", "rude":"rudely",
+                            "perfect":"perfectly", "dangerous":"dangerously"}
 
         self.vocab_dict = {"quickly":"People drive ____ these days.",
                            "well":"Tenisha writes ____.",
