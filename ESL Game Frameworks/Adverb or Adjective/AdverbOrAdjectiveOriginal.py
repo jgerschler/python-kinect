@@ -52,49 +52,49 @@ class BodyGameRuntime(object):
 ##                            "brave":"bravely", "foolish":"foolishly", "lazy":"lazily", "rude":"rudely",
 ##                            "perfect":"perfectly", "dangerous":"dangerously"}
 
-        self.adj_adv_dict = [["active", "actively"], ["careful", "carefully"], ["cheerful", "cheerfully"],
-                             ["comfortable", "comfortably"], ["continuous", "continuously"],
-                             ["crazy", "crazily"], ["delightful", "delightfully"],
-                             ["creative", "creatively"], ["destructive", "destructively"],
-                             ["powerful", "powerfully"], ["firm", "firmly"], ["forceful", "forcefully"],
-                             ["glorious", "gloriously"], ["hateful", "hatefully"],
-                             ["hopeful", "hopefully"], ["insulting", "insultingly"],
-                             ["intention", "intentionally"], ["irritating", "irritatingly"],
-                             ["bad", "badly"], ["quick", "quickly"], ["speedy", "speedily"],
-                             ["nice", "nicely"], ["deep", "deeply"], ["brave", "bravely"],
-                             ["foolish", "foolishly"], ["lazy", "lazily"], ["rude", "rudely"],
-                             ["perfect", "perfectly"], ["dangerous", "dangerously"]]
+##        self.adj_adv_list = [["active", "actively"], ["careful", "carefully"], ["cheerful", "cheerfully"],
+##                             ["comfortable", "comfortably"], ["continuous", "continuously"],
+##                             ["crazy", "crazily"], ["delightful", "delightfully"],
+##                             ["creative", "creatively"], ["destructive", "destructively"],
+##                             ["powerful", "powerfully"], ["firm", "firmly"], ["forceful", "forcefully"],
+##                             ["glorious", "gloriously"], ["hateful", "hatefully"],
+##                             ["hopeful", "hopefully"], ["insulting", "insultingly"],
+##                             ["intention", "intentionally"], ["irritating", "irritatingly"],
+##                             ["bad", "badly"], ["quick", "quickly"], ["speedy", "speedily"],
+##                             ["nice", "nicely"], ["deep", "deeply"], ["brave", "bravely"],
+##                             ["foolish", "foolishly"], ["lazy", "lazily"], ["rude", "rudely"],
+##                             ["perfect", "perfectly"], ["dangerous", "dangerously"]]
 
-        self.vocab_dict = {"quickly":"People drive ____ these days.",
-                           "active":"She has an ____ dog.",
-                           "carefully":"He ____ opens the mail.",
-                           "cheerfully":"The man ____ greets his friends.",
-                           "comfortable":"That is a ____ sofa!",
-                           "continuously":"The alarm sounds ____.",
-                           "crazy":"That woman is ____!",
-                           "delightfully":"The woman speaks ____.",
-                           "creative":"Juan is a very ____ carpenter.",
-                           "destructive":"Wow! That is a ____ storm!",
-                           "powerfully":"The racecar drove ____ by the school.",
-                           "firmly":"Juana ____ said NO!",
-                           "forcefully":"He ____ opened the door.",
-                           "glorious":"It was a ____ day.",
-                           "hatefully":"Maria ____ observed her ex-boyfriend.",
-                           "hopeful":"He had a ___ idea.",
-                           "insulting":"It was an ____ phrase.",
-                           "intentionally":"Jenny ____ ate the last cookie.",
-                           "irritating":"He likes ____ music.",
-                           "bad":"Careful! That is a ___ dog!",
-                           "quickly":"She ___ called the police.",
-                           "speedily":"The man reacted ___ to the good news.",
-                           "nice":"Susana has always been a ____ girl.",
-                           "deep":"The boys plunged into the ____ water.",
-                           "bravely":"The girl ____ saved her cat from the fire.",
-                           "foolishly":"The man ____ drank too much alcohol.",
-                           "lazy":"Mario is lazy and never does his homework.",
-                           "rude":"The teacher is very ____.",
-                           "perfectly":"The girl plays soccer ____.",
-                           "dangerous":"She is a ____ driver."}
+        self.vocab_dict = {"quickly":"People drive ____ these days.":["quickly", "quick"],
+                           "active":"She has an ____ dog.":["active", "actively"],
+                           "carefully":"He ____ opens the mail.":["carefully", "careful"],
+                           "cheerfully":"The man ____ greets his friends.":["cheerfully", "cheerful"],
+                           "comfortable":"That is a ____ sofa!":["comfortable", "comfortably"],
+                           "continuously":"The alarm sounds ____.":["continuously", "continuous"],
+                           "crazy":"That woman is ____!":["crazy", "crazily"],
+                           "delightfully":"The woman speaks ____.":["delightfully", "delightful"],
+                           "creative":"Juan is a very ____ carpenter.":["creative", "creatively"],
+                           "destructive":"Wow! That is a ____ storm!":["destructive", "destructively"],
+                           "powerfully":"The racecar drove ____ by the school.":["powerfully", "powerful"],
+                           "firmly":"Juana ____ said NO!":["firmly", "firm"],
+                           "forcefully":"He ____ opened the door.":["forcefully", "forceful"],
+                           "glorious":"It was a ____ day.":["glorious", "gloriously"],
+                           "hatefully":"Maria ____ observed her ex-boyfriend.":["hatefully", "hateful"],
+                           "hopeful":"He had a ___ idea.":["hopeful", "hopefully"],
+                           "insulting":"It was an ____ phrase.":["insulting", "insultingly"],
+                           "intentionally":"Jenny ____ ate the last cookie.":["intentionally", "intentional"],
+                           "irritating":"He likes ____ music.":["irritating", "irritatingly"],
+                           "bad":"Careful! That is a ___ dog!":["bad", "badly"],
+                           "quickly":"She ___ called the police.":["quickly", "quick"],
+                           "speedily":"The man reacted ___ to the good news.":["speedily", "speedy"],
+                           "nice":"Susana has always been a ____ girl.":["nice", "nicely"],
+                           "deep":"The boys plunged into the ____ water.":["deep", "deeply"],
+                           "bravely":"The girl ____ saved her cat from the fire.":["bravely", "brave"],
+                           "foolishly":"The man ____ drank too much alcohol.":["foolishly", "foolish"],
+                           "lazy":"Mario is ____ and never does his homework.":["lazy", "lazily"],
+                           "rude":"The teacher is very ____.":["rude":"rudely"],
+                           "perfectly":"The girl plays soccer ____.":["perfectly", "perfect"],
+                           "dangerous":"She is a ____ driver.":["dangerous", "dangerously"]}
 
         self._frame_surface.fill((255, 255, 255))
 
@@ -111,7 +111,7 @@ class BodyGameRuntime(object):
         self._frame_surface.blit(text_surf, text_rect)
         return text_rect 
 
-    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, rect2, joint0, words, selected_word_esp):
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect2, joint0, words, selected_word_esp):
         joint0State = joints[joint0].TrackingState;
         
         if (joint0State == PyKinectV2.TrackingState_NotTracked or
@@ -121,13 +121,12 @@ class BodyGameRuntime(object):
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
         if ((rect0.collidepoint(center) and self.vocab_dict[words[0]] == selected_word_esp) or
-            (rect1.collidepoint(center) and self.vocab_dict[words[1]] == selected_word_esp) or
             (rect2.collidepoint(center) and self.vocab_dict[words[2]] == selected_word_esp)):
             self.score += 1
             self.beep_sound.play()
             pygame.time.delay(500)
             self.new_round()
-        elif rect0.collidepoint(center) or rect1.collidepoint(center) or rect2.collidepoint(center):
+        elif rect0.collidepoint(center) or rect2.collidepoint(center):
             try:
                 pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
                 self.buzz_sound.play()               
@@ -144,18 +143,17 @@ class BodyGameRuntime(object):
 
         self.message_display(selected_word_esp, (300, 1000), 1)
         rect0 = self.message_display(words[0], (300, 300), 1)
-        rect1 = self.message_display(words[1], (self._frame_surface.get_width() / 2, 100), 1)
         rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 300), 1)
         self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
         self.message_display(str(seconds), (self._frame_surface.get_width() - 300, 800), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_Head, words, selected_word_esp)
+                            rect2, PyKinectV2.JointType_Head, words, selected_word_esp)
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristRight, words, selected_word_esp)
+                            rect2, PyKinectV2.JointType_WristRight, words, selected_word_esp)
         # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect1, rect2, PyKinectV2.JointType_WristLeft, words, selected_word_esp)
+                            rect2, PyKinectV2.JointType_WristLeft, words, selected_word_esp)
 
     def end_game(self):
         self._frame_surface.fill(BG_COLOR)
@@ -171,7 +169,7 @@ class BodyGameRuntime(object):
         self.run()
 
     def new_round(self):
-        words = random.sample(list(self.vocab_dict), 3)
+        words = random.sample(list(self.vocab_dict), 1)
         selected_word_esp = self.vocab_dict[words[0]]
         random.shuffle(words)
         pygame.time.delay(500)
