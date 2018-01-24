@@ -111,7 +111,7 @@ class BodyGameRuntime(object):
         self._frame_surface.blit(text_surf, text_rect)
         return text_rect 
 
-    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect2, joint0, words, selected_word_esp):
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, joint0, words, sentence, correct_word):
         joint0State = joints[joint0].TrackingState;
         
         if (joint0State == PyKinectV2.TrackingState_NotTracked or
@@ -120,13 +120,13 @@ class BodyGameRuntime(object):
 
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
-        if ((rect0.collidepoint(center) and self.vocab_dict[words[0]] == selected_word_esp) or
-            (rect2.collidepoint(center) and self.vocab_dict[words[2]] == selected_word_esp)):
+        if ((rect0.collidepoint(center) and words[0] == correct_word) or
+            (rect1.collidepoint(center) and [words[1] == correct_word)):
             self.score += 1
             self.beep_sound.play()
             pygame.time.delay(500)
             self.new_round()
-        elif rect0.collidepoint(center) or rect2.collidepoint(center):
+        elif rect0.collidepoint(center) or rect1.collidepoint(center):
             try:
                 pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
                 self.buzz_sound.play()               
@@ -138,22 +138,22 @@ class BodyGameRuntime(object):
             except:
                 pass
 
-    def update_screen(self, joints, jointPoints, color, highlight_color, words, selected_word_esp, seconds):
+    def update_screen(self, joints, jointPoints, color, highlight_color, words, sentence, correct_word, seconds):
         self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
-        self.message_display(selected_word_esp, (300, 1000), 1)
+        self.message_display(sentence, (300, 1000), 1)
         rect0 = self.message_display(words[0], (300, 300), 1)
-        rect2 = self.message_display(words[2], (self._frame_surface.get_width() - 300, 300), 1)
+        rect1 = self.message_display(words[1], (self._frame_surface.get_width() - 300, 300), 1)
         self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
         self.message_display(str(seconds), (self._frame_surface.get_width() - 300, 800), 1)
 
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect2, PyKinectV2.JointType_Head, words, selected_word_esp)
+                            rect1, PyKinectV2.JointType_Head, words, sentence, correct_word)
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect2, PyKinectV2.JointType_WristRight, words, selected_word_esp)
+                            rect1, PyKinectV2.JointType_WristRight, words, sentence, correct_word)
         # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
         self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
-                            rect2, PyKinectV2.JointType_WristLeft, words, selected_word_esp)
+                            rect1, PyKinectV2.JointType_WristLeft, words, sentence, correct_word)
 
     def end_game(self):
         self._frame_surface.fill(BG_COLOR)
@@ -169,8 +169,9 @@ class BodyGameRuntime(object):
         self.run()
 
     def new_round(self):
-        words = random.sample(list(self.vocab_dict), 1)
-        selected_word_esp = self.vocab_dict[words[0]]
+        sentence = random.sample(list(self.vocab_dict), 1)
+        words = self.vocab_dict[sentence[0]]
+        correct_word = words[0]
         random.shuffle(words)
         pygame.time.delay(500)
         
@@ -194,7 +195,7 @@ class BodyGameRuntime(object):
                     
                     joints = body.joints 
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, selected_word_esp, seconds)
+                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, sentence, correct_word, seconds)
 
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
             target_height = int(h_to_w * self._screen.get_width())
