@@ -41,16 +41,29 @@ class BodyGameRuntime(object):
 
         self.score = 0
 
-        self.adj_adv_dict ={"active":"actively", "careful":"carefully", "cheerful":"cheerfully",
-                            "comfortable":"comfortably", "continuous":"continuously",
-                            "crazy":"crazily", "delightful":"delightfully", "creative":"creatively",
-                            "destructive":"destructively", "powerful":"powerfully",
-                            "firm":"firmly", "forceful":"forcefully", "glorious":"gloriously",
-                            "hateful":"hatefully", "hopeful":"hopefully", "insulting":"insultingly",
-                            "intention":"intentionally", "irritating":"irritatingly", "bad":"badly",
-                            "quick":"quickly", "speedy":"speedily", "nice":"nicely", "deep":"deeply",
-                            "brave":"bravely", "foolish":"foolishly", "lazy":"lazily", "rude":"rudely",
-                            "perfect":"perfectly", "dangerous":"dangerously"}
+##        self.adj_adv_dict = {"active":"actively", "careful":"carefully", "cheerful":"cheerfully",
+##                            "comfortable":"comfortably", "continuous":"continuously",
+##                            "crazy":"crazily", "delightful":"delightfully", "creative":"creatively",
+##                            "destructive":"destructively", "powerful":"powerfully",
+##                            "firm":"firmly", "forceful":"forcefully", "glorious":"gloriously",
+##                            "hateful":"hatefully", "hopeful":"hopefully", "insulting":"insultingly",
+##                            "intention":"intentionally", "irritating":"irritatingly", "bad":"badly",
+##                            "quick":"quickly", "speedy":"speedily", "nice":"nicely", "deep":"deeply",
+##                            "brave":"bravely", "foolish":"foolishly", "lazy":"lazily", "rude":"rudely",
+##                            "perfect":"perfectly", "dangerous":"dangerously"}
+
+        self.adj_adv_dict = [["active", "actively"], ["careful", "carefully"], ["cheerful", "cheerfully"],
+                             ["comfortable", "comfortably"], ["continuous", "continuously"],
+                             ["crazy", "crazily"], ["delightful", "delightfully"],
+                             ["creative", "creatively"], ["destructive", "destructively"],
+                             ["powerful", "powerfully"], ["firm", "firmly"], ["forceful", "forcefully"],
+                             ["glorious", "gloriously"], ["hateful", "hatefully"],
+                             ["hopeful", "hopefully"], ["insulting", "insultingly"],
+                             ["intention", "intentionally"], ["irritating", "irritatingly"],
+                             ["bad", "badly"], ["quick", "quickly"], ["speedy", "speedily"],
+                             ["nice", "nicely"], ["deep", "deeply"], ["brave", "bravely"],
+                             ["foolish", "foolishly"], ["lazy", "lazily"], ["rude", "rudely"],
+                             ["perfect", "perfectly"], ["dangerous", "dangerously"]]
 
         self.vocab_dict = {"quickly":"People drive ____ these days.",
                            "active":"She has an ____ dog.",
