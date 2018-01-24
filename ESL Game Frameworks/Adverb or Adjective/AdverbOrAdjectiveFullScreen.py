@@ -155,7 +155,7 @@ class BodyGameRuntime(object):
 
     def new_round(self):
         sentence = random.sample(list(self.vocab_dict), 1)[0]
-        words = self.vocab_dict[sentence]
+        words = self.vocab_dict[sentence][:]
         correct_word = words[0]
         random.shuffle(words)
         pygame.time.delay(500)
