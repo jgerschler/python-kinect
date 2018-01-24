@@ -25,8 +25,8 @@ class BodyGameRuntime(object):
         self.beep_sound = pygame.mixer.Sound('audio\\beep.ogg')
         self.buzz_sound = pygame.mixer.Sound('audio\\buzz.ogg')
         self._infoObject = pygame.display.Info()
-        self._screen = pygame.display.set_mode((self._infoObject.current_w,
-                                                self._infoObject.current_h),
+        self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1,
+                                                self._infoObject.current_h >> 1),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
 
         pygame.display.set_caption("Kinect Game Framework Test")
