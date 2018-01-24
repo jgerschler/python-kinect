@@ -92,7 +92,7 @@ class BodyGameRuntime(object):
                            "The girl ____ saved her cat from the fire.":["bravely", "brave"],
                            "The man ____ drank too much alcohol.":["foolishly", "foolish"],
                            "Mario is ____ and never does his homework.":["lazy", "lazily"],
-                           "The teacher is very ____.":["rude":"rudely"],
+                           "The teacher is very ____.":["rude", "rudely"],
                            "The girl plays soccer ____.":["perfectly", "perfect"],
                            "She is a ____ driver.":["dangerous", "dangerously"]}
 
@@ -120,8 +120,7 @@ class BodyGameRuntime(object):
 
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
-        if ((rect0.collidepoint(center) and words[0] == correct_word) or
-            (rect1.collidepoint(center) and [words[1] == correct_word)):
+        if (rect0.collidepoint(center) and words[0] == correct_word) or (rect1.collidepoint(center) and words[1] == correct_word):
             self.score += 1
             self.beep_sound.play()
             pygame.time.delay(500)
@@ -169,8 +168,8 @@ class BodyGameRuntime(object):
         self.run()
 
     def new_round(self):
-        sentence = random.sample(list(self.vocab_dict), 1)
-        words = self.vocab_dict[sentence[0]]
+        sentence = random.sample(list(self.vocab_dict), 1)[0]
+        words = self.vocab_dict[sentence]
         correct_word = words[0]
         random.shuffle(words)
         pygame.time.delay(500)
