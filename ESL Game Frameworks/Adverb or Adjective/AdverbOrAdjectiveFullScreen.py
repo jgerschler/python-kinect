@@ -109,7 +109,7 @@ class BodyGameRuntime(object):
         if (rect0.collidepoint(center) and words[0] == correct_word) or (rect1.collidepoint(center) and words[1] == correct_word):
             self.score += 1
             self.beep_sound.play()
-            pygame.time.delay(500)
+            pygame.time.delay(2000)
             self.new_round()
         elif rect0.collidepoint(center) or rect1.collidepoint(center):
             try:
