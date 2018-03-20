@@ -80,6 +80,14 @@ class BodyGameRuntime(object):
                            "The gross man winked at her ____.":["sexually", "sexual"],
                            "Concepcion is a ____ girlfriend.":["jealous", "jealously"],
                            "Luis ____ goes to the bar.":["frequently", "frequent"],
+                           "We didn't go out because it was raining ____.":["heavily", "heavy"],
+                           "Our team lost the game because we played ____.":["badly", "bad"],
+                           "We waited ____.":["patiently", "patient"],
+                           "Jimmy arrived ____.":["unexpectedly", "unexpected"],
+                           "Mike stays fit by playing tennis ____.":["regularly", "regular"],
+                           "The driver of the car was ____ injured.":["seriously", "serious"],
+                           "The driver of the car had ____ injuries.":["serious", "seriously"],
+                           "Ismael looked ____ at Eleazar.":["hungrily", "hungry"],
                            "She is a ____ driver.":["dangerous", "dangerously"]}
 
         self._frame_surface.fill((255, 255, 255))
