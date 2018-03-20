@@ -11,7 +11,7 @@ import pygame
 import random
 
 
-TRACKING_COLOR = pygame.color.Color("purple")
+TRACKING_COLOR = pygame.color.Color("green")
 HIGHLIGHT_COLOR = pygame.color.Color("red")
 BG_COLOR = pygame.color.Color("white")
 GAME_TIME = 60# seconds
@@ -134,6 +134,28 @@ class BodyGameRuntime(object):
             except:
                 pass
 
+    def draw_ind_intro_point(self, joints, jointPoints, color, joint0):
+        joint0State = joints[joint0].TrackingState;
+        
+        if (joint0State == PyKinectV2.TrackingState_NotTracked or
+            joint0State == PyKinectV2.TrackingState_Inferred):
+            return
+
+        center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
+
+        try:
+            pygame.draw.circle(self._frame_surface, color, center, 20, 0)
+        except:
+            pass
+
+    def update_intro_screen(self, joints, jointPoints, color):
+        self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
+
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_Head)
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft)
+        # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight)
+
     def update_screen(self, joints, jointPoints, color, highlight_color, words, sentence, correct_word, seconds):
         self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
@@ -214,6 +236,29 @@ class BodyGameRuntime(object):
                 if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                     self.start_ticks = pygame.time.get_ticks()
                     self.new_round()
+
+            if self._kinect.has_new_body_frame(): 
+                self._bodies = self._kinect.get_last_body_frame()
+
+            if self._bodies is not None:
+                for i in range(0, self._kinect.max_body_count):
+                    body = self._bodies.bodies[i]
+                    if not body.is_tracked: 
+                        continue 
+                    
+                    joints = body.joints 
+                    joint_points = self._kinect.body_joints_to_color_space(joints)
+                    self.update_intro_screen(joints, joint_points, TRACKING_COLOR)
+
+            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+            target_height = int(h_to_w * self._screen.get_width())
+            surface_to_draw = pygame.transform.scale(self._frame_surface,
+                                                     (self._screen.get_width(), target_height));
+            self._screen.blit(surface_to_draw, (0,0))
+            surface_to_draw = None
+            pygame.display.update()
+
+            self._clock.tick(60)
 
         self._kinect.close()
         pygame.quit()
