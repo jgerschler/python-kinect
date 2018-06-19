@@ -1,179 +1,268 @@
+# for python 3
+# You'll need to customize this according to your needs. Proper orientation of
+# the kinect is vital; if participants are able to maintain their head or wrists
+# continuously inside the word rects, they will repeatedly trigger the collision
+# detection
 from pykinect2 import PyKinectV2
 from pykinect2.PyKinectV2 import *
 from pykinect2 import PyKinectRuntime
 
-import ctypes
-import _ctypes
 import pygame
-import sys
+import random
 
-if sys.hexversion >= 0x03000000:
-    import _thread as thread
-else:
-    import thread
 
-# colors for drawing different bodies 
-SKELETON_COLORS = [pygame.color.THECOLORS["red"], 
-                  pygame.color.THECOLORS["blue"], 
-                  pygame.color.THECOLORS["green"], 
-                  pygame.color.THECOLORS["orange"], 
-                  pygame.color.THECOLORS["purple"], 
-                  pygame.color.THECOLORS["yellow"], 
-                  pygame.color.THECOLORS["violet"]]
+TRACKING_COLOR = pygame.color.Color("green")
+HIGHLIGHT_COLOR = pygame.color.Color("red")
+BG_COLOR = pygame.color.Color("white")
+GAME_TIME = 60# seconds
 
 
 class BodyGameRuntime(object):
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
 
-        # Used to manage how fast the screen updates
-        self._clock = pygame.time.Clock()
-
-        # Set the width and height of the screen [width, height]
+        self.beep_sound = pygame.mixer.Sound('audio\\beep.ogg')
+        self.buzz_sound = pygame.mixer.Sound('audio\\buzz.ogg')
         self._infoObject = pygame.display.Info()
-        self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1, self._infoObject.current_h >> 1), 
+        self._screen = pygame.display.set_mode((self._infoObject.current_w >> 1,
+                                                self._infoObject.current_h >> 1),
                                                pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
 
-        pygame.display.set_caption("Kinect for Windows v2 Body Game")
+        pygame.display.set_caption("Kinect Game Framework Test")
 
-        # Loop until the user clicks the close button.
-        self._done = False
-
-        # Used to manage how fast the screen updates
+        self.finished = False
         self._clock = pygame.time.Clock()
-
-        # Kinect runtime object, we want only color and body frames 
-        self._kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
-
-        # back buffer surface for getting Kinect color frames, 32bit color, width and height equal to the Kinect color frame size
-        self._frame_surface = pygame.Surface((self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
-
-        # here we will store skeleton data 
+        self._kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color |
+                                                       PyKinectV2.FrameSourceTypes_Body)
+        self._frame_surface = pygame.Surface((self._kinect.color_frame_desc.Width,
+                                              self._kinect.color_frame_desc.Height), 0, 32)
         self._bodies = None
 
+        self.score = 0
 
-    def draw_body_bone(self, joints, jointPoints, color, joint0, joint1):
+        self.vocab_dict = {"People drive ____ these days.":["quickly", "quick"],
+                           "She has an ____ dog.":["active", "actively"],
+                           "He ____ opens the mail.":["carefully", "careful"],
+                           "The man ____ greets his friends.":["cheerfully", "cheerful"],
+                           "That is a ____ sofa!":["comfortable", "comfortably"],
+                           "The alarm sounds ____.":["continuously", "continuous"],
+                           "That woman is ____!":["crazy", "crazily"],
+                           "The woman speaks ____.":["delightfully", "delightful"],
+                           "Juan is a very ____ carpenter.":["creative", "creatively"],
+                           "Wow! That is a ____ storm!":["destructive", "destructively"],
+                           "The racecar drove ____ by the school.":["powerfully", "powerful"],
+                           "Juana ____ said NO!":["firmly", "firm"],
+                           "He ____ opened the door.":["forcefully", "forceful"],
+                           "It was a ____ day.":["glorious", "gloriously"],
+                           "Maria ____ observed her ex-boyfriend.":["hatefully", "hateful"],
+                           "He had a ___ idea.":["hopeful", "hopefully"],
+                           "It was an ____ phrase.":["insulting", "insultingly"],
+                           "Jenny ____ ate the last cookie.":["intentionally", "intentional"],
+                           "He likes ____ music.":["irritating", "irritatingly"],
+                           "Careful! That is a ___ dog!":["bad", "badly"],
+                           "The man reacted ___ to the good news.":["speedily", "speedy"],
+                           "Susana has always been a ____ girl.":["nice", "nicely"],
+                           "The boys plunged into the ____ water.":["deep", "deeply"],
+                           "The girl ____ saved her cat from the fire.":["bravely", "brave"],
+                           "The man ____ drank too much alcohol.":["foolishly", "foolish"],
+                           "Mario is ____ and never does his homework.":["lazy", "lazily"],
+                           "The teacher is very ____.":["rude", "rudely"],
+                           "The girl plays soccer ____.":["perfectly", "perfect"],
+                           "It was an ____ crash.":["accidental", "accidentally"],
+                           "That is an ____ turtle!.":["angry", "angrily"],
+                           "She ____ ate her beans.":["happily", "happy"],
+                           "John spoke ____.":["seriously", "serious"],
+                           "Firulais is a ____ dog.":["loyal", "loyally"],
+                           "Margie yelled ____ into the night.":["blindly", "blind"],
+                           "He ran ____ toward me.":["wildly", "wild"],
+                           "Pedro is ____!":["innocent", "innocently"],
+                           "The gross man winked at her ____.":["sexually", "sexual"],
+                           "Concepcion is a ____ girlfriend.":["jealous", "jealously"],
+                           "Luis ____ goes to the bar.":["frequently", "frequent"],
+                           "We didn't go out because it was raining ____.":["heavily", "heavy"],
+                           "Our team lost the game because we played ____.":["badly", "bad"],
+                           "We waited ____.":["patiently", "patient"],
+                           "Jimmy arrived ____.":["unexpectedly", "unexpected"],
+                           "Mike stays fit by playing tennis ____.":["regularly", "regular"],
+                           "The driver of the car was ____ injured.":["seriously", "serious"],
+                           "The driver of the car had ____ injuries.":["serious", "seriously"],
+                           "Ismael looked ____ at Eleazar.":["hungrily", "hungry"],
+                           "She is a ____ driver.":["dangerous", "dangerously"]}
+
+        self._frame_surface.fill((255, 255, 255))
+
+    def text_objects(self, text, font):
+        text_surface = font.render(text, True, (0, 0, 0))
+        return text_surface, text_surface.get_rect()
+
+    def message_display(self, text, loc_tuple, loc_int):
+        # loc_int: 1 center, 2 top left, 3 bottom left, 4 bottom right, 5 top right
+        text_surf, text_rect = self.text_objects(text, pygame.font.Font('arial.ttf', 64))
+        loc_dict = {1:'text_rect.center', 2:'text_rect.topleft', 3:'text_rect.bottomleft',
+                    4:'text_rect.bottomright', 5:'text_rect.topright'}
+        exec(loc_dict[loc_int] + ' = loc_tuple')
+        self._frame_surface.blit(text_surf, text_rect)
+        return text_rect 
+
+    def draw_ind_point(self, joints, jointPoints, color, highlight_color, rect0, rect1, joint0, words, sentence, correct_word):
         joint0State = joints[joint0].TrackingState;
-        joint1State = joints[joint1].TrackingState;
-
-        # both joints are not tracked
-        if (joint0State == PyKinectV2.TrackingState_NotTracked) or (joint1State == PyKinectV2.TrackingState_NotTracked): 
+        
+        if (joint0State == PyKinectV2.TrackingState_NotTracked or
+            joint0State == PyKinectV2.TrackingState_Inferred):
             return
 
-        # both joints are not *really* tracked
-        if (joint0State == PyKinectV2.TrackingState_Inferred) and (joint1State == PyKinectV2.TrackingState_Inferred):
+        center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
+
+        if (rect0.collidepoint(center) and words[0] == correct_word) or (rect1.collidepoint(center) and words[1] == correct_word):
+            self.score += 1
+            self.beep_sound.play()
+            pygame.time.delay(500)
+            self.new_round()
+        elif rect0.collidepoint(center) or rect1.collidepoint(center):
+            try:
+                pygame.draw.circle(self._frame_surface, highlight_color, center, 20, 0)
+                self.score -= 1
+                self.buzz_sound.play()
+                pygame.time.delay(500)
+                self.new_round()
+            except: # need to catch it due to possible invalid positions (with inf)
+                pass
+        else:
+            try:
+                pygame.draw.circle(self._frame_surface, color, center, 20, 0)
+            except:
+                pass
+
+    def draw_ind_intro_point(self, joints, jointPoints, color, joint0):
+        joint0State = joints[joint0].TrackingState;
+        
+        if (joint0State == PyKinectV2.TrackingState_NotTracked or
+            joint0State == PyKinectV2.TrackingState_Inferred):
             return
 
-        # ok, at least one is good 
-        start = (jointPoints[joint0].x, jointPoints[joint0].y)
-        end = (jointPoints[joint1].x, jointPoints[joint1].y)
+        center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
         try:
-            pygame.draw.line(self._frame_surface, color, start, end, 8)
-        except: # need to catch it due to possible invalid positions (with inf)
+            pygame.draw.circle(self._frame_surface, color, center, 20, 0)
+        except:
             pass
 
-    def draw_body(self, joints, jointPoints, color):
-        # Torso
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_Head, PyKinectV2.JointType_Neck);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_Neck, PyKinectV2.JointType_SpineShoulder);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineShoulder, PyKinectV2.JointType_SpineMid);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineMid, PyKinectV2.JointType_SpineBase);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineShoulder, PyKinectV2.JointType_ShoulderRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineShoulder, PyKinectV2.JointType_ShoulderLeft);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineBase, PyKinectV2.JointType_HipRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineBase, PyKinectV2.JointType_HipLeft);
-    
-        # Right Arm    
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ShoulderRight, PyKinectV2.JointType_ElbowRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowRight, PyKinectV2.JointType_WristRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristRight, PyKinectV2.JointType_HandRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HandRight, PyKinectV2.JointType_HandTipRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristRight, PyKinectV2.JointType_ThumbRight);
+    def update_intro_screen(self, joints, jointPoints, color):
+        self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
-        # Left Arm
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ShoulderLeft, PyKinectV2.JointType_ElbowLeft);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowLeft, PyKinectV2.JointType_WristLeft);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristLeft, PyKinectV2.JointType_HandLeft);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HandLeft, PyKinectV2.JointType_HandTipLeft);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristLeft, PyKinectV2.JointType_ThumbLeft);
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_Head)
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft)
+        # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight)
 
-        # Right Leg
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HipRight, PyKinectV2.JointType_KneeRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_KneeRight, PyKinectV2.JointType_AnkleRight);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_AnkleRight, PyKinectV2.JointType_FootRight);
+    def update_screen(self, joints, jointPoints, color, highlight_color, words, sentence, correct_word, seconds):
+        self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
-        # Left Leg
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HipLeft, PyKinectV2.JointType_KneeLeft);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_KneeLeft, PyKinectV2.JointType_AnkleLeft);
-        self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_AnkleLeft, PyKinectV2.JointType_FootLeft);
+        self.message_display(sentence, (300, 900), 2)
+        rect0 = self.message_display(words[0], (400, 300), 1)
+        rect1 = self.message_display(words[1], (self._frame_surface.get_width() - 400, 300), 1)
+        self.message_display(str(self.score), (self._frame_surface.get_width() / 2, 800), 1)
+        self.message_display(str(seconds), (self._frame_surface.get_width() - 300, 800), 1)
 
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
+                            rect1, PyKinectV2.JointType_Head, words, sentence, correct_word)
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
+                            rect1, PyKinectV2.JointType_WristRight, words, sentence, correct_word)
+        # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
+        self.draw_ind_point(joints, jointPoints, color, highlight_color, rect0,
+                            rect1, PyKinectV2.JointType_WristLeft, words, sentence, correct_word)
 
-    def draw_color_frame(self, frame, target_surface):
-        target_surface.lock()
-        address = self._kinect.surface_as_array(target_surface.get_buffer())
-        ctypes.memmove(address, frame.ctypes.data, frame.size)
-        del address
-        target_surface.unlock()
+    def end_game(self):
+        self._frame_surface.fill(BG_COLOR)
+        self.message_display("Score: {}".format(self.score), (self._frame_surface.get_width() / 2, self._frame_surface.get_height() / 2), 1)
+        h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+        target_height = int(h_to_w * self._screen.get_width())
+        surface_to_draw = pygame.transform.scale(self._frame_surface,
+                                                     (self._screen.get_width(), target_height));
+        self._screen.blit(surface_to_draw, (0,0))
+        surface_to_draw = None
+        pygame.display.update()
+        pygame.time.delay(3000)
+        self.run()
 
-    def run(self):
-        # -------- Main Program Loop -----------
-        while not self._done:
-            # --- Main event loop
-            for event in pygame.event.get(): # User did something
-                if event.type == pygame.QUIT: # If user clicked close
-                    self._done = True # Flag that we are done so we exit this loop
-
-                elif event.type == pygame.VIDEORESIZE: # window resized
-                    self._screen = pygame.display.set_mode(event.dict['size'], 
-                                               pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
-                    
-            # --- Game logic should go here
-
-            # --- Getting frames and drawing  
-            # --- Woohoo! We've got a color frame! Let's fill out back buffer surface with frame's data 
-            if self._kinect.has_new_color_frame():
-                frame = self._kinect.get_last_color_frame()
-                self.draw_color_frame(frame, self._frame_surface)
-                frame = None
-
-            # --- Cool! We have a body frame, so can get skeletons
+    def new_round(self):
+        sentence = random.sample(list(self.vocab_dict), 1)[0]
+        words = self.vocab_dict[sentence][:]
+        correct_word = words[0]
+        random.shuffle(words)
+        pygame.time.delay(500)
+        
+        while not self.finished:
+            seconds = int(GAME_TIME - (pygame.time.get_ticks() - self.start_ticks)/1000)
+            if seconds <= 0:
+                self.end_game()
+                
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finished = True
+                             
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
 
-            # --- draw skeletons to _frame_surface
-            if self._bodies is not None: 
+            if self._bodies is not None:
                 for i in range(0, self._kinect.max_body_count):
                     body = self._bodies.bodies[i]
                     if not body.is_tracked: 
                         continue 
                     
                     joints = body.joints 
-                    # convert joint coordinates to color space 
                     joint_points = self._kinect.body_joints_to_color_space(joints)
-                    self.draw_body(joints, joint_points, SKELETON_COLORS[i])
+                    self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, sentence, correct_word, seconds)
 
-            # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
-            # --- (screen size may be different from Kinect's color frame size) 
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
             target_height = int(h_to_w * self._screen.get_width())
-            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height));
+            surface_to_draw = pygame.transform.scale(self._frame_surface,
+                                                     (self._screen.get_width(), target_height));
             self._screen.blit(surface_to_draw, (0,0))
             surface_to_draw = None
             pygame.display.update()
 
-            # --- Go ahead and update the screen with what we've drawn.
-            pygame.display.flip()
+            self._clock.tick(60)
+            
+        self.end_game()
 
-            # --- Limit to 60 frames per second
+    def run(self):
+        self.score = 0
+        while not self.finished:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finished = True
+                if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                    self.start_ticks = pygame.time.get_ticks()
+                    self.new_round()
+
+            if self._kinect.has_new_body_frame(): 
+                self._bodies = self._kinect.get_last_body_frame()
+
+            if self._bodies is not None:
+                for i in range(0, self._kinect.max_body_count):
+                    body = self._bodies.bodies[i]
+                    if not body.is_tracked: 
+                        continue 
+                    
+                    joints = body.joints 
+                    joint_points = self._kinect.body_joints_to_color_space(joints)
+                    self.update_intro_screen(joints, joint_points, TRACKING_COLOR)
+
+            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+            target_height = int(h_to_w * self._screen.get_width())
+            surface_to_draw = pygame.transform.scale(self._frame_surface,
+                                                     (self._screen.get_width(), target_height));
+            self._screen.blit(surface_to_draw, (0,0))
+            surface_to_draw = None
+            pygame.display.update()
+
             self._clock.tick(60)
 
-        # Close our Kinect sensor, close the window and quit.
         self._kinect.close()
         pygame.quit()
 
-
-__main__ = "Kinect v2 Body Game"
-game = BodyGameRuntime();
-game.run();
-
+if __name__ == "__main__":
+    game = BodyGameRuntime()
+    game.run()
