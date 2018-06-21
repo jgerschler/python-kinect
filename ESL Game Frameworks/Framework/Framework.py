@@ -74,12 +74,7 @@ class BodyGameRuntime(object):
                     joint_points = self.kinect.body_joints_to_color_space(joints)
                     self.update_intro_screen(joints, joint_points, TRACKING_COLOR)
 
-            h_to_w = float(self.frame_surface.get_height()) / self.frame_surface.get_width()
-            target_height = int(h_to_w * self.screen.get_width())
-            surface_to_draw = pygame.transform.scale(self.frame_surface,
-                                                     (self.screen.get_width(), target_height));
-            self.screen.blit(surface_to_draw, (0,0))
-            surface_to_draw = None
+            self.screen.blit(self.frame_surface, (0,0))
             pygame.display.update()
 
             self.clock.tick(30)
