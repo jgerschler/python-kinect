@@ -3,20 +3,18 @@ from pykinect2.PyKinectV2 import *
 from pykinect2 import PyKinectRuntime
 
 import pygame
-import random
 
 
 TRACKING_COLOR = pygame.color.Color("green")
 HIGHLIGHT_COLOR = pygame.color.Color("red")
 BG_COLOR = pygame.color.Color("white")
-GAME_TIME = 60# seconds
 
 
 class BodyGameRuntime(object):
     def __init__(self):
         pygame.init()
 
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, 32)
 
         pygame.display.set_caption("Kinect Base Framework Test")
 
@@ -61,7 +59,7 @@ class BodyGameRuntime(object):
                     self.finished = True
                 if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                     # start round here (remove pass and add function ref)
-                    pass
+                    self.finished = True
 
             if self.kinect.has_new_body_frame(): 
                 self.bodies = self.kinect.get_last_body_frame()
@@ -84,7 +82,7 @@ class BodyGameRuntime(object):
             surface_to_draw = None
             pygame.display.update()
 
-            self.clock.tick(60)
+            self.clock.tick(30)
 
         self.kinect.close()
         pygame.quit()
