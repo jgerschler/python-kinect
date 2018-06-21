@@ -22,7 +22,6 @@ class BodyGameRuntime(object):
 
         self.beep_sound = pygame.mixer.Sound('audio\\beep.ogg')
         self.buzz_sound = pygame.mixer.Sound('audio\\buzz.ogg')
-##        self._infoObject = pygame.display.Info()
         self._screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, 32)
 
         pygame.display.set_caption("Kinect Game Framework Test")
@@ -122,7 +121,7 @@ class BodyGameRuntime(object):
                 self.buzz_sound.play()
                 pygame.time.delay(500)
                 self.new_round()
-            except: # need to catch it due to possible invalid positions (with inf)
+            except:
                 pass
         else:
             try:
@@ -153,7 +152,7 @@ class BodyGameRuntime(object):
         self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight)
 
     def update_screen(self, joints, jointPoints, color, highlight_color, words, sentence, correct_word, seconds):
-        self._frame_surface.fill(BG_COLOR)# blank screen before drawing points
+        self._frame_surface.fill(BG_COLOR)
 
         self.message_display(sentence, (300, 900), 2)
         rect0 = self.message_display(words[0], (400, 300), 1)
@@ -180,7 +179,7 @@ class BodyGameRuntime(object):
         surface_to_draw = None
         pygame.display.update()
         pygame.time.delay(3000)
-        self.run()
+        pygame.quit()
 
     def new_round(self):
         sentence = random.sample(list(self.vocab_dict), 1)[0]
@@ -193,11 +192,7 @@ class BodyGameRuntime(object):
             seconds = int(GAME_TIME - (pygame.time.get_ticks() - self.start_ticks)/1000)
             if seconds <= 0:
                 self.end_game()
-                
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.finished = True
-                             
+                                           
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
 
@@ -211,15 +206,17 @@ class BodyGameRuntime(object):
                     joint_points = self._kinect.body_joints_to_color_space(joints)
                     self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, sentence, correct_word, seconds)
 
-##            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-##            target_height = int(h_to_w * self._screen.get_width())
-##            surface_to_draw = pygame.transform.scale(self._frame_surface,
-##                                                     (self._screen.get_width(), target_height));
             self._screen.blit(self._frame_surface, (0,0))
             surface_to_draw = None
             pygame.display.update()
 
             self._clock.tick(60)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finished = True
+                if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+                    self.finished = True
             
         self.end_game()
 
@@ -255,7 +252,7 @@ class BodyGameRuntime(object):
                 if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                     self.start_ticks = pygame.time.get_ticks()
                     self.new_round()
-                if event.type == pygame.KEYUP and event.key == pygame.K_ESC:
+                if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                     self.finished = True
 
         self._kinect.close()
