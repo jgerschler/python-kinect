@@ -10,12 +10,10 @@ from pykinect2 import PyKinectRuntime
 import pygame
 import random
 
-
 TRACKING_COLOR = pygame.color.Color("green")
 HIGHLIGHT_COLOR = pygame.color.Color("red")
 BG_COLOR = pygame.color.Color("white")
 GAME_TIME = 60# seconds
-
 
 class BodyGameRuntime(object):
     def __init__(self):
@@ -24,10 +22,8 @@ class BodyGameRuntime(object):
 
         self.beep_sound = pygame.mixer.Sound('audio\\beep.ogg')
         self.buzz_sound = pygame.mixer.Sound('audio\\buzz.ogg')
-        self._infoObject = pygame.display.Info()
-        self._screen = pygame.display.set_mode((self._infoObject.current_w,
-                                                self._infoObject.current_h),
-                                               pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE, 32)
+##        self._infoObject = pygame.display.Info()
+        self._screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, 32)
 
         pygame.display.set_caption("Kinect Game Framework Test")
 
@@ -215,11 +211,11 @@ class BodyGameRuntime(object):
                     joint_points = self._kinect.body_joints_to_color_space(joints)
                     self.update_screen(joints, joint_points, TRACKING_COLOR, HIGHLIGHT_COLOR, words, sentence, correct_word, seconds)
 
-            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-            target_height = int(h_to_w * self._screen.get_width())
-            surface_to_draw = pygame.transform.scale(self._frame_surface,
-                                                     (self._screen.get_width(), target_height));
-            self._screen.blit(surface_to_draw, (0,0))
+##            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+##            target_height = int(h_to_w * self._screen.get_width())
+##            surface_to_draw = pygame.transform.scale(self._frame_surface,
+##                                                     (self._screen.get_width(), target_height));
+            self._screen.blit(self._frame_surface, (0,0))
             surface_to_draw = None
             pygame.display.update()
 
@@ -230,13 +226,6 @@ class BodyGameRuntime(object):
     def run(self):
         self.score = 0
         while not self.finished:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.finished = True
-                if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-                    self.start_ticks = pygame.time.get_ticks()
-                    self.new_round()
-
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
 
@@ -259,6 +248,15 @@ class BodyGameRuntime(object):
             pygame.display.update()
 
             self._clock.tick(60)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finished = True
+                if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                    self.start_ticks = pygame.time.get_ticks()
+                    self.new_round()
+                if event.type == pygame.KEYUP and event.key == pygame.K_ESC:
+                    self.finished = True
 
         self._kinect.close()
         pygame.quit()
