@@ -98,7 +98,7 @@ class BodyGameRuntime(object):
 
     def message_display(self, text, loc_tuple, loc_int):
         # loc_int: 1 center, 2 top left, 3 bottom left, 4 bottom right, 5 top right
-        text_surf, text_rect = self.text_objects(text, pygame.font.Font('arial.ttf', 64))
+        text_surf, text_rect = self.text_objects(text, pygame.font.Font(None, 64))
         loc_dict = {1:'text_rect.center', 2:'text_rect.topleft', 3:'text_rect.bottomleft',
                     4:'text_rect.bottomright', 5:'text_rect.topright'}
         exec(loc_dict[loc_int] + ' = loc_tuple')
@@ -184,7 +184,8 @@ class BodyGameRuntime(object):
         surface_to_draw = None
         pygame.display.update()
         pygame.time.delay(3000)
-        self.run()
+        self._kinect.close()
+        pygame.quit()
 
     def new_round(self):
         sentence = random.sample(list(self.vocab_dict), 1)[0]
@@ -197,10 +198,6 @@ class BodyGameRuntime(object):
             seconds = int(GAME_TIME - (pygame.time.get_ticks() - self.start_ticks)/1000)
             if seconds <= 0:
                 self.end_game()
-                
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.finished = True
                              
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
@@ -224,19 +221,18 @@ class BodyGameRuntime(object):
             pygame.display.update()
 
             self._clock.tick(60)
-            
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finished = True
+                if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+                    self.finished = True 
+
         self.end_game()
 
     def run(self):
         self.score = 0
         while not self.finished:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.finished = True
-                if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-                    self.start_ticks = pygame.time.get_ticks()
-                    self.new_round()
-
             if self._kinect.has_new_body_frame(): 
                 self._bodies = self._kinect.get_last_body_frame()
 
@@ -259,6 +255,15 @@ class BodyGameRuntime(object):
             pygame.display.update()
 
             self._clock.tick(60)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.finished = True
+                if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                    self.start_ticks = pygame.time.get_ticks()
+                    self.new_round()
+                if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+                    self.finished = True              
 
         self._kinect.close()
         pygame.quit()
