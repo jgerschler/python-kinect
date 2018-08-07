@@ -16,7 +16,7 @@ class BodyGameRuntime(object):
 
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, 32)
 
-        pygame.display.set_caption("Kinect Base Framework Test")
+        pygame.display.set_caption("Kinect Body Game Test")
 
         self.finished = False
         
@@ -40,7 +40,7 @@ class BodyGameRuntime(object):
         center = (int(jointPoints[joint0].x), int(jointPoints[joint0].y))
 
         try:
-            pygame.draw.circle(self.frame_surface, color, center, 20, 0)
+            pygame.draw.circle(self.frame_surface, color, center, 10, 0)
         except:
             pass
 
@@ -48,9 +48,18 @@ class BodyGameRuntime(object):
         self.frame_surface.fill(BG_COLOR)# blank screen before drawing points
 
         self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_Head)
+        
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_HandRight)
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_HandTipRight)
+##        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_ThumbRight)
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_HandLeft)
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_HandTipLeft)
+##        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_ThumbLeft)
+        
         self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_WristLeft)
-        # may change PyKinectV2.JointType_WristRight to PyKinectV2.JointType_ElbowRight
         self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_WristRight)
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_ElbowLeft)
+        self.draw_ind_intro_point(joints, jointPoints, color, PyKinectV2.JointType_ElbowRight)
 
     def run(self):
         while not self.finished:
